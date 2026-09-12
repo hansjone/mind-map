@@ -33,7 +33,21 @@ function bundledWebIndex() {
 }
 
 function isPackagedInstall() {
+  // Local monorepo / pnpm link: never treat as packaged even if bundle/ exists for shipping.
+  // Otherwise DATA_DIR becomes packages/dsh-plugin/data and the real DB under mind-map/data is "gone".
+  if (mindMapRoot !== pluginRoot) return false
   return existsSync(bundledServer()) && existsSync(bundledWebIndex())
+}
+
+function resolveDataDir(explicit) {
+  if (explicit) return explicit
+  if (process.env.DATA_DIR) return process.env.DATA_DIR
+  if (isPackagedInstall()) {
+    // Stable across plugin reinstalls (not under node_modules).
+    const home = process.env.DSH_HOME || process.env.HOME || process.env.USERPROFILE || ''
+    if (home) return join(home, 'mind-map-data')
+  }
+  return join(mindMapRoot, 'data')
 }
 
 function resolveTsxCliRel() {
@@ -224,6 +238,7 @@ export function createRuntime() {
     }
 
     const packaged = isPackagedInstall()
+    const resolvedDataDir = resolveDataDir(dataDir)
     const env = {
       ...process.env,
       PORT: String(port),
@@ -231,8 +246,8 @@ export function createRuntime() {
       MINDMAP_DSH_BRIDGE: bridgeUrl || '',
       MINDMAP_INTERNAL_TOKEN: internalToken || '',
       MINDMAP_LLM_SOURCE: 'dsh',
+      DATA_DIR: resolvedDataDir,
     }
-    if (dataDir) env.DATA_DIR = dataDir
 
     let cwd
     let args
@@ -241,9 +256,11 @@ export function createRuntime() {
       env.MINDMAP_ROOT = pluginRoot
       env.MINDMAP_WEB_DIST = join(pluginRoot, 'bundle', 'web')
       args = [bundledServer()]
-      console.log('[dsh-mind-map] starting packaged bundle/server.mjs')
+      console.log(`[dsh-mind-map] starting packaged bundle/server.mjs (data=${resolvedDataDir})`)
     } else {
       cwd = mindMapRoot
+      env.MINDMAP_ROOT = mindMapRoot
+      console.log(`[dsh-mind-map] starting monorepo server (data=${resolvedDataDir})`)
       const entryAbs = join(mindMapRoot, 'apps/server/src/index.ts')
       const distAbs = join(mindMapRoot, 'apps/server/dist/index.js')
       const useTs = existsSync(entryAbs)
