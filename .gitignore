@@ -1,0 +1,13 @@
+node_modules
+dist
+data
+uploads
+*.sqlite
+*.sqlite-*
+.DS_Store
+*.log
+.env
+.env.local
+apps/web/dist
+apps/server/dist
+packages/*/dist

@@ -1,0 +1,22 @@
+{
+  "name": "mind-map",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.7.0",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @mind-map/server --filter @mind-map/web dev",
+    "dev:server": "pnpm --filter @mind-map/server dev",
+    "dev:web": "pnpm --filter @mind-map/web dev",
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "start": "pnpm --filter @mind-map/server start",
+    "typecheck": "pnpm -r run typecheck",
+    "stress": "tsx scripts/stress-10k.mts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

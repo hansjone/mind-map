@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"]
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/graph-core" },
+    { "path": "../../packages/graph-store" },
+    { "path": "../../packages/layout-engine" },
+    { "path": "../../packages/dream-skin" }
+  ]
+}
