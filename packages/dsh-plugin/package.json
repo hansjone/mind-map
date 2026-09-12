@@ -11,11 +11,14 @@
   },
   "files": [
     "lib",
+    "bundle",
     "cordis.patch.yml",
-    "README.md"
+    "README.md",
+    "INSTALL.md"
   ],
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "pack": "node scripts/pack-bundle.mjs"
   },
   "dsh": {
     "bundle": {

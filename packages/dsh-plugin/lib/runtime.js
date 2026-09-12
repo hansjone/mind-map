@@ -2,6 +2,10 @@
  * Start / stop the mind-map Hono server as a child process.
  * Lifetime is tied to the DSH host: when the plugin disposes / process exits,
  * the canvas server is killed (including process tree on Windows).
+ *
+ * Two layouts:
+ * - Packaged (remote `dsh plugin add`): packages/dsh-plugin/bundle/{web,server.mjs}
+ * - Monorepo (local link): ../../.. mind-map root with apps/web + apps/server
  */
 
 import { spawn, execSync } from 'node:child_process'
@@ -11,7 +15,26 @@ import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-export const mindMapRoot = join(__dirname, '../../..')
+/** dsh-mind-map package root (…/dsh-mind-map or …/packages/dsh-plugin) */
+export const pluginRoot = join(__dirname, '..')
+/** Monorepo root when linked from source; otherwise same as pluginRoot when packaged. */
+export const mindMapRoot = (() => {
+  const mono = join(__dirname, '../../..')
+  if (existsSync(join(mono, 'apps', 'web', 'package.json'))) return mono
+  return pluginRoot
+})()
+
+function bundledServer() {
+  return join(pluginRoot, 'bundle', 'server.mjs')
+}
+
+function bundledWebIndex() {
+  return join(pluginRoot, 'bundle', 'web', 'index.html')
+}
+
+function isPackagedInstall() {
+  return existsSync(bundledServer()) && existsSync(bundledWebIndex())
+}
 
 function resolveTsxCliRel() {
   const candidates = [
@@ -33,6 +56,9 @@ function resolveTsxCliRel() {
 }
 
 function ensureWebDist() {
+  // Remote/plugin install ships prebuilt assets — never run pnpm here.
+  if (isPackagedInstall()) return
+
   const indexHtml = join(mindMapRoot, 'apps', 'web', 'dist', 'index.html')
   const watchSrc = [
     join(mindMapRoot, 'apps', 'web', 'src', 'TopologyCanvas.tsx'),
@@ -55,6 +81,16 @@ function ensureWebDist() {
     }
   }
   if (!needsBuild) return
+
+  if (!existsSync(join(mindMapRoot, 'pnpm-workspace.yaml'))) {
+    throw new Error(
+      'mind-map web UI is missing and this is not a monorepo checkout. ' +
+        'Reinstall a release that includes packages/dsh-plugin/bundle ' +
+        '(github:hansjone/mind-map#path:packages/dsh-plugin after maintainer runs pnpm pack:plugin), ' +
+        'or clone the full repo and link locally.',
+    )
+  }
+
   console.log('[dsh-mind-map] building web UI (apps/web/dist missing or stale)…')
   try {
     execSync('pnpm --filter @mind-map/web build', {
@@ -187,14 +223,7 @@ export function createRuntime() {
       await new Promise((r) => setTimeout(r, 400))
     }
 
-    const entryAbs = join(mindMapRoot, 'apps/server/src/index.ts')
-    const distAbs = join(mindMapRoot, 'apps/server/dist/index.js')
-    const useTs = existsSync(entryAbs)
-    const scriptAbs = useTs ? entryAbs : distAbs
-    if (!existsSync(scriptAbs)) {
-      throw new Error(`mind-map server entry not found under ${mindMapRoot}`)
-    }
-
+    const packaged = isPackagedInstall()
     const env = {
       ...process.env,
       PORT: String(port),
@@ -205,18 +234,35 @@ export function createRuntime() {
     }
     if (dataDir) env.DATA_DIR = dataDir
 
-    const scriptRel = useTs ? 'apps/server/src/index.ts' : 'apps/server/dist/index.js'
+    let cwd
     let args
-    if (useTs) {
-      const tsxCli = resolveTsxCliRel()
-      if (!tsxCli) throw new Error('tsx not found; run pnpm install in mind-map')
-      args = [tsxCli, scriptRel]
+    if (packaged) {
+      cwd = pluginRoot
+      env.MINDMAP_ROOT = pluginRoot
+      env.MINDMAP_WEB_DIST = join(pluginRoot, 'bundle', 'web')
+      args = [bundledServer()]
+      console.log('[dsh-mind-map] starting packaged bundle/server.mjs')
     } else {
-      args = [scriptRel]
+      cwd = mindMapRoot
+      const entryAbs = join(mindMapRoot, 'apps/server/src/index.ts')
+      const distAbs = join(mindMapRoot, 'apps/server/dist/index.js')
+      const useTs = existsSync(entryAbs)
+      const scriptAbs = useTs ? entryAbs : distAbs
+      if (!existsSync(scriptAbs)) {
+        throw new Error(`mind-map server entry not found under ${mindMapRoot}`)
+      }
+      const scriptRel = useTs ? 'apps/server/src/index.ts' : 'apps/server/dist/index.js'
+      if (useTs) {
+        const tsxCli = resolveTsxCliRel()
+        if (!tsxCli) throw new Error('tsx not found; run pnpm install in mind-map')
+        args = [tsxCli, scriptRel]
+      } else {
+        args = [scriptRel]
+      }
     }
 
     child = spawn(process.execPath, args, {
-      cwd: mindMapRoot,
+      cwd,
       env,
       stdio: ['ignore', 'pipe', 'pipe'],
       windowsHide: true,
@@ -277,8 +323,9 @@ export function createRuntime() {
       ...last,
       running: Boolean(child && !child.killed),
       pid: child?.pid || null,
+      packaged: isPackagedInstall(),
     }
   }
 
-  return { start, stop, status, mindMapRoot }
+  return { start, stop, status, mindMapRoot, pluginRoot }
 }

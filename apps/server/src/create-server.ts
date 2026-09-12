@@ -57,7 +57,19 @@ async function callDshBridge(path: string, init?: RequestInit) {
 }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-export const mindMapRoot = path.resolve(__dirname, "../../..");
+/** Monorepo root, or plugin package root when launched from packaged bundle. */
+export const mindMapRoot = process.env.MINDMAP_ROOT
+  ? path.resolve(process.env.MINDMAP_ROOT)
+  : path.resolve(__dirname, "../../..");
+
+export function resolveWebDist(root = mindMapRoot) {
+  if (process.env.MINDMAP_WEB_DIST) {
+    return path.resolve(process.env.MINDMAP_WEB_DIST);
+  }
+  const bundled = path.join(root, "bundle", "web");
+  if (fs.existsSync(path.join(bundled, "index.html"))) return bundled;
+  return path.join(root, "apps", "web", "dist");
+}
 
 export function loadDotEnv(root = mindMapRoot) {
   try {
@@ -642,14 +654,13 @@ export function startMindMapServer(
     }
   });
 
-  // Static UI: cwd is mind-map root when launched by the plugin.
-  const webDistRel = "apps/web/dist";
-  const webDistAbs = path.join(root, "apps/web/dist");
-  if (fs.existsSync(webDistAbs) || fs.existsSync(path.join(process.cwd(), webDistRel))) {
+  // Static UI: monorepo apps/web/dist, or packaged bundle/web via MINDMAP_WEB_DIST.
+  const webDistAbs = resolveWebDist(root);
+  if (fs.existsSync(path.join(webDistAbs, "index.html"))) {
     app.use(
       "/*",
       serveStatic({
-        root: fs.existsSync(webDistAbs) ? webDistAbs : webDistRel,
+        root: webDistAbs,
         index: "index.html",
       }),
     );
@@ -659,13 +670,10 @@ export function startMindMapServer(
       if (p.startsWith("/api") || p === "/health" || p.startsWith("/ws") || p.startsWith("/uploads")) {
         return c.notFound()
       }
-      const indexPath = path.join(
-        fs.existsSync(webDistAbs) ? webDistAbs : path.join(process.cwd(), webDistRel),
-        "index.html",
-      );
+      const indexPath = path.join(webDistAbs, "index.html");
       if (!fs.existsSync(indexPath)) {
         return c.text(
-          "Mind Map UI not built. From mind-map repo run: pnpm --filter @mind-map/web build",
+          "Mind Map UI not built. From mind-map repo run: pnpm --filter @mind-map/web build && pnpm pack:plugin",
           503,
         );
       }
@@ -674,7 +682,7 @@ export function startMindMapServer(
   } else {
     app.get("/", (c) =>
       c.text(
-        "Mind Map UI missing (apps/web/dist). Run: pnpm --filter @mind-map/web build",
+        `Mind Map UI missing (${webDistAbs}). Run: pnpm pack:plugin`,
         503,
       ),
     );

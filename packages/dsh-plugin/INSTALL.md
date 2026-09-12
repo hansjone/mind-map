@@ -1,15 +1,30 @@
-# dsh-mind-map 本地安装到 DSH web profile（开发用）
+# dsh-mind-map 安装
 
-```powershell
-$plugin = "d:\project\chatgpt\mind-map\packages\dsh-plugin"
-# 用 dsh plugin add 链到本地包，或在 profile 里 link
-dsh plugin --profile web add -w $plugin
+## 远程安装（推荐）
+
+仓库需包含预构建 `packages/dsh-plugin/bundle`（维护者执行 `pnpm pack:plugin` 后推送）。
+
+```bash
+dsh plugin --profile web add -w "github:hansjone/mind-map#path:packages/dsh-plugin"
 ```
 
-装好后：
+装好后重启 `dsh web`，硬刷新浏览器。依赖：`dsh-better-sidebar`。
 
-1. 重启 `dsh web`，浏览器硬刷新（Ctrl+Shift+R）
-2. 右侧栏「+」选 **思维导图**，或 设置 → Mind Map → **打开思维导图 Tab**
-3. 拓扑占满右侧内容区；对话继续用中间 DSH 输入框
+启动日志应出现：
 
-依赖：已安装 `dsh-better-sidebar`（提供 `ctx.betterSidebar.registerTab`）。
+```text
+[dsh-mind-map] starting packaged bundle/server.mjs
+```
+
+若仍出现 `building web UI…`，说明装到的版本没有 `bundle/`，请更新插件或改用本地完整仓库。
+
+## 本地开发（link 整个 monorepo）
+
+```powershell
+cd d:\project\chatgpt\mind-map
+pnpm install
+pnpm pack:plugin
+dsh plugin --profile web add -w "d:\project\chatgpt\mind-map\packages\dsh-plugin"
+```
+
+开发改 UI 时可继续用 monorepo 源码启动（无 bundle 时会自动 `pnpm --filter @mind-map/web build`）。

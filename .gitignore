@@ -11,3 +11,5 @@ uploads
 apps/web/dist
 apps/server/dist
 packages/*/dist
+# keep packages/dsh-plugin/bundle (prebuilt for remote install)
+packages/dsh-plugin/bundle/_testdata

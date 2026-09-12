@@ -8,12 +8,14 @@
     "dev:server": "pnpm --filter @mind-map/server dev",
     "dev:web": "pnpm --filter @mind-map/web dev",
     "build": "pnpm -r run build",
+    "pack:plugin": "node packages/dsh-plugin/scripts/pack-bundle.mjs",
     "test": "pnpm -r run test",
     "start": "pnpm --filter @mind-map/server start",
     "typecheck": "pnpm -r run typecheck",
     "stress": "tsx scripts/stress-10k.mts"
   },
   "devDependencies": {
+    "esbuild": "^0.25.12",
     "tsx": "^4.19.3"
   },
   "engines": {
