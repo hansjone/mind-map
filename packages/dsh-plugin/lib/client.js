@@ -77,7 +77,7 @@ window.__ModuleLoader__.load({
       autoStart: '随 DSH 自动启动画布服务',
       open: '打开思维导图 Tab',
       opening: '打开中…',
-      hint: '侧栏打开「思维导图」先看到画布名册；点名称进入。AI 新建、打开或查图时会自动展开右侧画布。',
+      hint: '侧栏打开「思维导图」先看到画布名册；点名称进入。AI 新建、打开或查图时会自动进入对应画布。',
       save: '保存',
       saving: '保存中…',
       discard: '放弃',
@@ -106,7 +106,7 @@ window.__ModuleLoader__.load({
       autoStart: 'Start canvas server with DSH',
       open: 'Open mind-map tab',
       opening: 'Opening…',
-      hint: 'Open Mind Map from the sidebar to see the canvas roster first. AI create opens a new canvas and does not overwrite old ones.',
+      hint: 'Open Mind Map from the sidebar to see the canvas roster first. AI create/open/query jumps into that canvas automatically.',
       save: 'Save',
       saving: 'Saving…',
       discard: 'Discard',
@@ -313,7 +313,10 @@ window.__ModuleLoader__.load({
       const sessionId =
         props.scope && props.scope.sessionId != null ? String(props.scope.sessionId) : ''
       const meta = props.tab && props.tab.meta && typeof props.tab.meta === 'object' ? props.tab.meta : {}
-      // Restore: pending AI enter → fresh meta.enter → last canvas in sessionStorage → roster.
+      // Boot policy (manual vs AI):
+      // - AI pendingEnter / fresh meta.enter → open that canvas
+      // - liveCanvasId already set → panel remount while staying on a map (tab switch)
+      // - otherwise → roster (manual click on 思维导图 must NOT auto-open last map)
       const boot = (() => {
         const p = pendingEnter
         if (p && Date.now() - p.at < 30000) {
@@ -337,23 +340,17 @@ window.__ModuleLoader__.load({
             title: meta.title || 'Mind Map',
           }
         }
-        // Tab meta often keeps canvasId with enter:false after enterCanvas — still restore.
-        if (meta.canvasId) {
-          liveCanvasId = String(meta.canvasId)
-          writeLastCanvas(meta.canvasId, meta.title)
+        // Remount while already viewing a canvas (tab strip focus) — keep it.
+        if (liveCanvasId) {
+          const last = readLastCanvas()
+          const title =
+            (last && last.canvasId === liveCanvasId && last.title) ||
+            meta.title ||
+            'Mind Map'
           return {
             view: 'canvas',
-            canvasId: String(meta.canvasId),
-            title: meta.title || 'Mind Map',
-          }
-        }
-        const last = readLastCanvas()
-        if (last && last.canvasId) {
-          liveCanvasId = String(last.canvasId)
-          return {
-            view: 'canvas',
-            canvasId: String(last.canvasId),
-            title: last.title || 'Mind Map',
+            canvasId: String(liveCanvasId),
+            title: String(title),
           }
         }
         return { view: 'roster', canvasId: '', title: '' }
@@ -1133,28 +1130,16 @@ window.__ModuleLoader__.load({
           },
         }),
         onOpen: () => {
-          // AI jump in progress — leave panel alone.
+          // AI jump in progress — leave panel alone (auto-enter that canvas).
           if (Date.now() < aiJumpUntil || pendingEnter) return
-          // Already inside a canvas (or restoring one) — never bounce to roster.
-          if (liveCanvasId) return
-          const last = readLastCanvas()
-          if (last && last.canvasId) {
-            markAiJump({ canvasId: last.canvasId, title: last.title })
-            window.dispatchEvent(
-              new CustomEvent('dsh-mind-map:open', {
-                detail: {
-                  canvasId: last.canvasId,
-                  title: last.title || zh.tabTitle,
-                },
-              }),
-            )
-            return
-          }
-          // True first open from + menu with no prior canvas → roster.
+          // Manual open from + / sidebar: always land on roster.
+          // (Do not restore sessionStorage / sticky meta — that fought AI auto-enter UX.)
+          liveCanvasId = ''
+          clearLastCanvas()
           window.dispatchEvent(new CustomEvent('dsh-mind-map:show-roster'))
         },
-        // Do NOT roster on onActivate: tab-strip switch / single:true focus
-        // must keep the open canvas. Use ← 列表 to leave a map.
+        // Do NOT roster on onActivate: tab-strip switch must keep the open canvas.
+        // Use ← 列表 or open the feature again to see the roster.
         component: (props) => h(MindmapTabPanel, props),
       })
     }
