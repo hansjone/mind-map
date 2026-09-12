@@ -9,7 +9,7 @@
  */
 
 import { spawn, execSync } from 'node:child_process'
-import { existsSync, statSync } from 'node:fs'
+import { existsSync, statSync, mkdirSync, copyFileSync, cpSync } from 'node:fs'
 import { join, dirname, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
@@ -48,6 +48,40 @@ function resolveDataDir(explicit) {
     if (home) return join(home, 'mind-map-data')
   }
   return join(mindMapRoot, 'data')
+}
+
+/** One-shot: move DB out of package dir so plugin updates don't orphan canvases. */
+function migratePackagedDataIfNeeded(dataDir) {
+  if (!isPackagedInstall()) return
+  try {
+    const destDb = join(dataDir, 'mindmap.sqlite')
+    if (existsSync(destDb)) return
+    const candidates = [
+      join(pluginRoot, 'data', 'mindmap.sqlite'),
+      join(pluginRoot, 'bundle', '_testdata', 'mindmap.sqlite'),
+    ]
+    for (const srcDb of candidates) {
+      if (!existsSync(srcDb)) continue
+      const srcDir = dirname(srcDb)
+      mkdirSync(dataDir, { recursive: true })
+      for (const name of ['mindmap.sqlite', 'mindmap.sqlite-shm', 'mindmap.sqlite-wal']) {
+        const from = join(srcDir, name)
+        const to = join(dataDir, name)
+        if (existsSync(from) && !existsSync(to)) {
+          copyFileSync(from, to)
+        }
+      }
+      const uploadsFrom = join(srcDir, 'uploads')
+      const uploadsTo = join(dataDir, 'uploads')
+      if (existsSync(uploadsFrom) && !existsSync(uploadsTo)) {
+        cpSync(uploadsFrom, uploadsTo, { recursive: true })
+      }
+      console.log(`[dsh-mind-map] migrated canvas DB → ${dataDir}`)
+      return
+    }
+  } catch (e) {
+    console.warn('[dsh-mind-map] data migrate skipped:', e?.message || e)
+  }
 }
 
 function resolveTsxCliRel() {
@@ -239,6 +273,7 @@ export function createRuntime() {
 
     const packaged = isPackagedInstall()
     const resolvedDataDir = resolveDataDir(dataDir)
+    migratePackagedDataIfNeeded(resolvedDataDir)
     const env = {
       ...process.env,
       PORT: String(port),
