@@ -344,6 +344,12 @@ export const OP_SCHEMA_DOC = {
     },
     {
       type: "create_node",
+      text: "核心交换机",
+      alias: "core_sw",
+      icon: "router",
+    },
+    {
+      type: "create_node",
       text: "AIOps诊断",
       alias: "aiops",
       relations: [{ to: "@restart", label: "触发重启", kind: "relation" }],
@@ -494,9 +500,11 @@ export const OP_SCHEMA_DOC = {
     restore_node:
       "Soft-deleted nodes keep their id. Pass that id (or deleted @alias / unique title). Restores compatible incident edges; children already promoted stay under the new parent.",
     create_node:
-      "Omit parentId for top-level. Optional pos pins immediately. Optional alias. Optional relations[] for outgoing graph edges (not URL links). Optional description object.",
+      "Omit parentId for top-level. Optional pos pins immediately. Optional alias. Optional icon (server|database|cloud|person|folder|doc|link|warning|check|star|gear|globe|router). Optional relations[] for outgoing graph edges (not URL links). Optional description object.",
     update_node_meta:
-      "Patch note/description/tags/links/imageUrl/dueAt/startAt/accentColor/icon/alias. description is a JSON object (knowledge fields). Null clears scalar fields. links = URL bookmarks.",
+      "Patch note/description/tags/links/imageUrl/dueAt/startAt/accentColor/icon/alias. icon enum same as create_node. description is a JSON object (knowledge fields). Null clears scalar fields. links = URL bookmarks.",
+    set_prefs:
+      "Partial canvas prefs: density, branchColoring, nodeViewMode (bubble|card|topology; canvas-global), showHoverCard, nodeBadges, showRelationEdges, riskProfile, themeId, inspectorMode.",
     update_edge_meta:
       "Patch label/tags/note/weight(1-5)/lineStyle(solid|dashed|dotted)/direction(forward|both|none) on an edge.",
     set_edge_label: "Need edgeId from spatial_context.edges or get_subgraph.",

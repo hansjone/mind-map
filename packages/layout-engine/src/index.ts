@@ -12,7 +12,7 @@ export type LayoutInput = {
   edges: MindEdge[];
   focusNodeId: string;
   density?: Density;
-  /** Canvas-wide bubble vs card chrome (affects box sizes). */
+  /** Canvas-wide bubble vs card vs topology chrome (affects box sizes). */
   nodeViewMode?: NodeViewMode;
   /** Previous frame positions — reused when hierarchy structure is unchanged. */
   prevPositions?: PositionMap;
@@ -52,8 +52,18 @@ export function nodeLayoutSize(
     | "pinned"
   >,
   dens: Dens,
-  opts?: { asCard?: boolean },
+  opts?: { asCard?: boolean; asTopology?: boolean },
 ): { w: number; h: number } {
+  if (opts?.asTopology) {
+    const icon = dens.nodeW >= 200 ? 36 : 30;
+    const caption = dens.nodeW >= 200 ? 20 : 18;
+    const gap = 6;
+    const pad = dens.nodeW >= 200 ? 8 : 6;
+    return {
+      w: Math.max(dens.nodeW >= 200 ? 88 : 72, icon + pad * 2),
+      h: icon + gap + caption + pad,
+    };
+  }
   let w = dens.nodeW;
   let h = dens.nodeH;
   // meta strip (badges / tags / due)
@@ -248,7 +258,7 @@ function buildSubtree(
   children: Map<string, string[]>,
   dens: Dens,
   path: Set<string>,
-  asCard: boolean,
+  sizeOpts: { asCard?: boolean; asTopology?: boolean },
   childFilter?: (childId: string) => boolean,
 ): FlexDatum | null {
   if (path.has(id)) return null;
@@ -266,12 +276,12 @@ function buildSubtree(
         children,
         dens,
         nextPath,
-        asCard,
+        sizeOpts,
       );
       if (child) kids.push(child);
     }
   }
-  const box = nodeLayoutSize(node, dens, { asCard });
+  const box = nodeLayoutSize(node, dens, sizeOpts);
   return {
     id,
     // flextree size = full box + gutters (claim real space, not a rigid grid cell)
@@ -397,6 +407,7 @@ export function hierarchyFingerprint(edges: MindEdge[]): string {
 export function layout(input: LayoutInput): PositionMap {
   const dens = DENSITY[input.density ?? "comfortable"];
   const asCard = input.nodeViewMode === "card";
+  const asTopology = input.nodeViewMode === "topology";
   const nodesById = new Map(input.nodes.map((n) => [n.id, n]));
   if (!nodesById.has(input.focusNodeId)) return {};
 
@@ -407,7 +418,7 @@ export function layout(input: LayoutInput): PositionMap {
   const sizes = new Map<string, { w: number; h: number }>();
   for (const n of input.nodes) {
     if (n.deletedAt || hidden.has(n.id)) continue;
-    sizes.set(n.id, nodeLayoutSize(n, dens, { asCard }));
+    sizes.set(n.id, nodeLayoutSize(n, dens, { asCard, asTopology }));
   }
 
   const prev = input.prevPositions;
@@ -501,7 +512,7 @@ export function layout(input: LayoutInput): PositionMap {
       children,
       dens,
       new Set(),
-      asCard,
+      { asCard, asTopology },
       (childId) => sideOf.get(childId) === side,
     );
     if (!tree?.children?.length) continue;

@@ -261,6 +261,7 @@ export function NodePropEditor({
                   }}
                 >
                   <option value="">无</option>
+                  <option value="router">路由器</option>
                   <option value="server">🖥 服务器</option>
                   <option value="database">🗄 数据库</option>
                   <option value="cloud">☁ 云</option>

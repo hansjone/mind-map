@@ -276,8 +276,12 @@ CREATE INDEX IF NOT EXISTS idx_snapshots_canvas ON snapshots(canvas_id);
     };
   }
 
-  createCanvas(title?: string, rootText?: string): MutableGraph {
-    const g = createEmptyGraph(title ?? "未命名画布", rootText);
+  createCanvas(
+    title?: string,
+    rootText?: string,
+    prefsOverride?: Partial<CanvasMeta["prefs"]>,
+  ): MutableGraph {
+    const g = createEmptyGraph(title ?? "未命名画布", rootText, prefsOverride);
     this.persistGraph(g, true);
     this.cache.set(g.canvas.id, g);
     return g;

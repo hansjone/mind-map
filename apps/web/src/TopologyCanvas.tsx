@@ -21,6 +21,8 @@ import {
   drawNodeShape,
   nodeBadges,
   nodeBoxSize,
+  ROUTER_ICON_URL,
+  TOPO_ICON_PX,
   wrapTextLines,
 } from "./node-geometry";
 import { drawPropSheet, NodePropOverlay } from "./node-props";
@@ -179,12 +181,25 @@ export function TopologyCanvas() {
     return () => mq.removeEventListener?.("change", onScheme);
   }, []);
   const dens = canvas?.prefs.density === "compact";
-  const cardView = canvas?.prefs.nodeViewMode !== "bubble";
+  const viewMode = canvas?.prefs.nodeViewMode ?? "card";
+  const cardView = viewMode === "card";
+  const topoView = viewMode === "topology";
   const boxOf = useCallback(
-    (n: (typeof nodes)[number]) => nodeBoxSize(n, dens, { asCard: cardView }),
-    [dens, cardView],
+    (n: (typeof nodes)[number]) =>
+      nodeBoxSize(n, dens, { asCard: cardView, asTopology: topoView }),
+    [dens, cardView, topoView],
   );
   const nw = dens ? 160 : NODE_W;
+
+  const withRouterIcon = useCallback(
+    <T extends { type: string; icon?: string | null }>(op: T): T => {
+      if (!topoView) return op;
+      if (op.type !== "create_node") return op;
+      if (op.icon != null) return op;
+      return { ...op, icon: "router" };
+    },
+    [topoView],
+  );
 
   const branchColoring = canvas?.prefs.branchColoring !== false;
   const branchColor = useMemo(() => {
@@ -372,16 +387,38 @@ export function TopologyCanvas() {
       const toN = nodes.find((n) => n.id === e.to);
       const aw = fromN ? boxOf(fromN).w : nw;
       const bw = toN ? boxOf(toN).w : nw;
+      const ah = fromN ? boxOf(fromN).h : 40;
+      const bh = toN ? boxOf(toN).h : 40;
       ctx.beginPath();
-      const x1 = a.x + (b.x >= a.x ? aw / 2 : -aw / 2);
-      const y1 = a.y;
-      const x2 = b.x + (b.x >= a.x ? -bw / 2 : bw / 2);
-      const y2 = b.y;
-      const cx = (x1 + x2) / 2;
-      ctx.moveTo(x1, y1);
-      ctx.bezierCurveTo(cx, y1, cx, y2, x2, y2);
+      let x1: number;
+      let y1: number;
+      let x2: number;
+      let y2: number;
+      let cx: number;
+      if (topoView) {
+        // Straight links into router icon centers (edges draw under nodes)
+        const icon = dens ? TOPO_ICON_PX.compact : TOPO_ICON_PX.comfortable;
+        const pad = dens ? 4 : 6;
+        x1 = a.x;
+        y1 = a.y - ah / 2 + pad + icon / 2;
+        x2 = b.x;
+        y2 = b.y - bh / 2 + pad + icon / 2;
+        cx = (x1 + x2) / 2;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+      } else {
+        x1 = a.x + (b.x >= a.x ? aw / 2 : -aw / 2);
+        y1 = a.y;
+        x2 = b.x + (b.x >= a.x ? -bw / 2 : bw / 2);
+        y2 = b.y;
+        cx = (x1 + x2) / 2;
+        ctx.moveTo(x1, y1);
+        ctx.bezierCurveTo(cx, y1, cx, y2, x2, y2);
+      }
       const weight = Math.max(1, Math.min(5, e.weight ?? 1));
-      const style = e.lineStyle ?? (e.kind === "relation" ? "dashed" : "solid");
+      const style = topoView
+        ? (e.lineStyle ?? "solid")
+        : (e.lineStyle ?? (e.kind === "relation" ? "dashed" : "solid"));
       if (style === "dotted") {
         ctx.setLineDash([2 / viewport.zoom, 4 / viewport.zoom]);
       } else if (style === "dashed") {
@@ -392,30 +429,35 @@ export function TopologyCanvas() {
       const isEdgeFlash = highlightEdgeIds.includes(e.id);
       const flashEdgeColor = highlightStyle?.edgeColor ?? theme.brand;
       const flashEdgeWidth = highlightStyle?.edgeWidth ?? 3.6;
-      ctx.strokeStyle = isEdgeFlash
+      // Topology: uniform link blue (ignore branch palette)
+      const topoLinkColor = "#2563eb";
+      const edgeColor = isEdgeFlash
         ? flashEdgeColor
-        : e.kind === "relation"
-          ? theme.labelSecondary
-          : branchColor.get(e.to) ?? theme.brand;
+        : topoView
+          ? topoLinkColor
+          : e.kind === "relation"
+            ? theme.labelSecondary
+            : branchColor.get(e.to) ?? theme.brand;
+      ctx.strokeStyle = edgeColor;
       ctx.lineWidth =
         (isEdgeFlash
           ? flashEdgeWidth
-          : 1.2 + (weight - 1) * 0.7) / viewport.zoom;
+          : topoView
+            ? 1.8 + (weight - 1) * 0.5
+            : 1.2 + (weight - 1) * 0.7) / viewport.zoom;
       ctx.stroke();
       ctx.setLineDash([]);
       // Arrowheads: direction forward|both|none (relation default forward)
       const dir =
-        e.direction ?? (e.kind === "relation" ? "forward" : "none");
+        e.direction ??
+        (topoView ? "none" : e.kind === "relation" ? "forward" : "none");
       if (dir === "forward" || dir === "both") {
-        const arrowAng = Math.atan2(0, x2 - cx || (x2 >= a.x ? 1 : -1));
+        const arrowAng = topoView
+          ? Math.atan2(y2 - y1, x2 - x1)
+          : Math.atan2(0, x2 - cx || (x2 >= a.x ? 1 : -1));
         const size = 8 / viewport.zoom;
-        const fill = isEdgeFlash
-          ? flashEdgeColor
-          : e.kind === "relation"
-            ? theme.labelSecondary
-            : branchColor.get(e.to) ?? theme.brand;
         ctx.beginPath();
-        ctx.fillStyle = fill;
+        ctx.fillStyle = edgeColor;
         ctx.moveTo(x2, y2);
         ctx.lineTo(
           x2 - size * Math.cos(arrowAng - 0.45),
@@ -429,15 +471,12 @@ export function TopologyCanvas() {
         ctx.fill();
       }
       if (dir === "both") {
-        const arrowAng = Math.atan2(0, x1 - cx || (a.x >= b.x ? 1 : -1));
+        const arrowAng = topoView
+          ? Math.atan2(y1 - y2, x1 - x2)
+          : Math.atan2(0, x1 - cx || (a.x >= b.x ? 1 : -1));
         const size = 8 / viewport.zoom;
-        const fill = isEdgeFlash
-          ? flashEdgeColor
-          : e.kind === "relation"
-            ? theme.labelSecondary
-            : branchColor.get(e.to) ?? theme.brand;
         ctx.beginPath();
-        ctx.fillStyle = fill;
+        ctx.fillStyle = edgeColor;
         ctx.moveTo(x1, y1);
         ctx.lineTo(
           x1 - size * Math.cos(arrowAng - 0.45),
@@ -460,10 +499,19 @@ export function TopologyCanvas() {
     if (linkPreview) {
       const a = posOf(linkPreview.fromId);
       if (a) {
+        const fromN = nodes.find((n) => n.id === linkPreview.fromId);
+        const ah = fromN ? boxOf(fromN).h : 40;
+        let sx = a.x;
+        let sy = a.y;
+        if (topoView) {
+          const icon = dens ? TOPO_ICON_PX.compact : TOPO_ICON_PX.comfortable;
+          const pad = dens ? 4 : 6;
+          sy = a.y - ah / 2 + pad + icon / 2;
+        }
         ctx.beginPath();
         ctx.setLineDash([4 / viewport.zoom, 4 / viewport.zoom]);
-        ctx.strokeStyle = theme.brand;
-        ctx.moveTo(a.x, a.y);
+        ctx.strokeStyle = topoView ? "#2563eb" : theme.brand;
+        ctx.moveTo(sx, sy);
         ctx.lineTo(linkPreview.x, linkPreview.y);
         ctx.stroke();
         ctx.setLineDash([]);
@@ -489,6 +537,71 @@ export function TopologyCanvas() {
       const isForbidden = dropForbidden && isDrop;
 
       if (inGhost) ctx.globalAlpha = 0.7;
+
+      if (topoView) {
+        const icon = dens ? TOPO_ICON_PX.compact : TOPO_ICON_PX.comfortable;
+        const pad = dens ? 4 : 6;
+        const iconX = x + (boxW - icon) / 2;
+        const iconY = y + pad;
+        if (isFlash && highlightStyle?.nodeGlow !== false) {
+          ctx.shadowColor = flashNodeColor;
+          ctx.shadowBlur = 14 / viewport.zoom;
+        } else if (isSel || isHover) {
+          ctx.shadowColor = fill;
+          ctx.shadowBlur = 10 / viewport.zoom;
+        }
+        const img = getCachedImage(ROUTER_ICON_URL, () =>
+          setImageTick((t) => t + 1),
+        );
+        if (img && img.naturalWidth > 0) {
+          ctx.drawImage(img, iconX, iconY, icon, icon);
+        } else {
+          ctx.fillStyle = fill;
+          ctx.beginPath();
+          ctx.roundRect?.(iconX, iconY, icon, icon, 6);
+          if (!ctx.roundRect) {
+            ctx.rect(iconX, iconY, icon, icon);
+          }
+          ctx.fill();
+        }
+        clearShadow(ctx);
+        // Soft accent tint plate behind icon when selected/hover
+        if (isSel || isHover || isDrop || isFlash) {
+          ctx.strokeStyle = isForbidden
+            ? theme.warn
+            : isDrop || isFlash
+              ? theme.brand
+              : fill;
+          ctx.lineWidth = 1.6 / viewport.zoom;
+          ctx.beginPath();
+          const rr = 6;
+          ctx.moveTo(iconX + rr, iconY);
+          ctx.arcTo(iconX + icon, iconY, iconX + icon, iconY + icon, rr);
+          ctx.arcTo(iconX + icon, iconY + icon, iconX, iconY + icon, rr);
+          ctx.arcTo(iconX, iconY + icon, iconX, iconY, rr);
+          ctx.arcTo(iconX, iconY, iconX + icon, iconY, rr);
+          ctx.closePath();
+          ctx.stroke();
+        }
+        ctx.fillStyle = theme.labelPrimary;
+        ctx.font = canvasFont(dens ? 11 : 12, 600);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        const captionY = iconY + icon + 4;
+        const lines = wrapTextLines(
+          ctx,
+          n.text || U.unnamed,
+          boxW - 4,
+          dens ? 1 : 2,
+        );
+        lines.forEach((line, i) => {
+          ctx.fillText(line, x + boxW / 2, captionY + i * (dens ? 13 : 14));
+        });
+        ctx.textAlign = "left";
+        ctx.globalAlpha = inGhost ? 0.7 : 1;
+        continue;
+      }
+
       if (isFlash && highlightStyle?.nodeGlow !== false) {
         ctx.shadowColor = flashNodeColor;
         ctx.shadowBlur = 14 / viewport.zoom;
@@ -725,6 +838,7 @@ export function TopologyCanvas() {
     nw,
     dens,
     cardView,
+    topoView,
     boxOf,
     canvas?.prefs.showRelationEdges,
     canvas?.prefs.nodeBadges,
@@ -869,31 +983,33 @@ export function TopologyCanvas() {
         e.preventDefault();
         const parent = selectedIds[0];
         void applyOps([
-          parent
-            ? { type: "create_node", text: U.newNode, parentId: parent }
-            : { type: "create_node", text: U.newNode },
+          withRouterIcon(
+            parent
+              ? { type: "create_node", text: U.newNode, parentId: parent }
+              : { type: "create_node", text: U.newNode },
+          ),
         ]);
       }
       if (e.key === "ArrowLeft" && selectedIds[0] && !editing) {
         e.preventDefault();
         void applyOps([
-          {
+          withRouterIcon({
             type: "create_node",
             text: U.leftChild,
             parentId: selectedIds[0],
             sidePref: -1,
-          },
+          }),
         ]);
       }
       if (e.key === "ArrowRight" && selectedIds[0] && !editing) {
         e.preventDefault();
         void applyOps([
-          {
+          withRouterIcon({
             type: "create_node",
             text: U.rightChild,
             parentId: selectedIds[0],
             sidePref: 1,
-          },
+          }),
         ]);
       }
       if ((e.key === "Delete" || e.key === "Backspace") && !editing) {
@@ -912,13 +1028,15 @@ export function TopologyCanvas() {
               x.to === selectedIds[0],
           )?.from ?? null;
         void applyOps([
-          parentOfSel
-            ? {
-                type: "create_node",
-                text: U.sibling,
-                parentId: parentOfSel,
-              }
-            : { type: "create_node", text: U.newNode },
+          withRouterIcon(
+            parentOfSel
+              ? {
+                  type: "create_node",
+                  text: U.sibling,
+                  parentId: parentOfSel,
+                }
+              : { type: "create_node", text: U.newNode },
+          ),
         ]);
       }
     };
@@ -943,6 +1061,7 @@ export function TopologyCanvas() {
     setZoomAroundCenter,
     viewport.zoom,
     U,
+    withRouterIcon,
   ]);
 
   const cursor =
@@ -1219,12 +1338,12 @@ export function TopologyCanvas() {
           });
         } else if (toolMode === "select") {
           void applyOps([
-            {
+            withRouterIcon({
               type: "create_node",
               text: U.newNode,
               ...(selectedIds[0] ? { parentId: selectedIds[0] } : {}),
               sidePref: world.x < 0 ? -1 : 1,
-            },
+            }),
           ]);
         }
       }}
@@ -1297,12 +1416,12 @@ export function TopologyCanvas() {
         <div className="canvas-toolbar__group">
           <button
             type="button"
-            className={`canvas-tool-btn${cardView ? "" : " is-active"}`}
+            className={`canvas-tool-btn${viewMode === "bubble" ? " is-active" : ""}`}
             title={U.bubbleTitle}
-            aria-pressed={!cardView}
+            aria-pressed={viewMode === "bubble"}
             disabled={locked}
             onClick={() => {
-              if (!cardView) return;
+              if (viewMode === "bubble") return;
               void setPrefs({ nodeViewMode: "bubble" });
             }}
           >
@@ -1310,16 +1429,29 @@ export function TopologyCanvas() {
           </button>
           <button
             type="button"
-            className={`canvas-tool-btn${cardView ? " is-active" : ""}`}
+            className={`canvas-tool-btn${viewMode === "card" ? " is-active" : ""}`}
             title={U.cardTitle}
-            aria-pressed={cardView}
+            aria-pressed={viewMode === "card"}
             disabled={locked}
             onClick={() => {
-              if (cardView) return;
+              if (viewMode === "card") return;
               void setPrefs({ nodeViewMode: "card" });
             }}
           >
             {U.card}
+          </button>
+          <button
+            type="button"
+            className={`canvas-tool-btn${viewMode === "topology" ? " is-active" : ""}`}
+            title={U.topologyTitle}
+            aria-pressed={viewMode === "topology"}
+            disabled={locked}
+            onClick={() => {
+              if (viewMode === "topology") return;
+              void setPrefs({ nodeViewMode: "topology" });
+            }}
+          >
+            {U.topology}
           </button>
           <button
             type="button"
@@ -1472,7 +1604,7 @@ export function TopologyCanvas() {
             const text = side < 0 ? U.leftChild : U.rightChild;
             const childW = dens ? 160 : 200;
             void applyOps([
-              {
+              withRouterIcon({
                 type: "create_node",
                 text,
                 parentId: id,
@@ -1481,7 +1613,7 @@ export function TopologyCanvas() {
                   x: p.x + side * (boxW / 2 + childW / 2 + edgeGap),
                   y: p.y,
                 },
-              },
+              }),
             ]);
           };
           return (

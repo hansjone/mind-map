@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import type { Server } from "node:http";
 import { WebSocketServer, type WebSocket } from "ws";
 import { SqliteGraphStore } from "@mind-map/graph-store";
-import { coerceOpInput, OpSchema, type Op } from "@mind-map/shared";
+import { coerceOpInput, OpSchema, NodeViewModeSchema, type Op } from "@mind-map/shared";
 import { listSkins } from "@mind-map/dream-skin";
 import { GraphError } from "@mind-map/graph-core";
 import { z } from "zod";
@@ -163,8 +163,16 @@ export function startMindMapServer(
     const body = (await c.req.json().catch(() => ({}))) as {
       title?: string;
       rootText?: string;
+      nodeViewMode?: string;
+      prefs?: { nodeViewMode?: string };
     };
-    const g = store.createCanvas(body.title, body.rootText);
+    const viewRaw = body.nodeViewMode ?? body.prefs?.nodeViewMode;
+    const parsed = NodeViewModeSchema.safeParse(viewRaw);
+    const g = store.createCanvas(
+      body.title,
+      body.rootText,
+      parsed.success ? { nodeViewMode: parsed.data } : undefined,
+    );
     broadcast({ type: "canvas/created", canvasId: g.canvas.id });
     return c.json(clientCanvasPayload(store, g.canvas.id));
   });

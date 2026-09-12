@@ -64,9 +64,10 @@ export function createChatHandler(ctx: ToolContext) {
 8. 固定坐标用 set_pinned 或 create_node 带 pos；不确定时 mindmap_get_schema。
 9. 节点属性：标题用 update_text；描述/多标签/多链接/图片URL/时间用 update_node_meta（patch）；边用 update_edge_meta 或 set_edge_label。
 10. 节点类型 stylePreset：default|card|title|decision|risk|note|muted（title 仅画布锚点，勿新建；card=新闻快照卡片，配图用 imageUrl、摘要用 note、来源用 links）。
-11. 同级排序用 reorder：优先 {"type":"reorder","nodeId":"...","order":10}；也可用 afterSiblingId（null=置顶）。
-12. 折叠 set_collapsed 会隐藏该节点主父链下的全部子孙并重新布局；展开后恢复。
-13. 问图：用 mindmap_query（neighbors|path|stats|orphans|missing_meta）；答完可用 mindmap_highlight 高亮路径；细节用 mindmap_get_node / mindmap_get_edge。禁止编造图中没有的事实。
+11. 节点图标 icon（create_node / update_node_meta.patch）：server|database|cloud|person|folder|doc|link|warning|check|star|gear|globe|router。拓扑排障图：建画布时可用 mindmap_create_canvas({ title, nodeViewMode:"topology" })，节点 icon:"router"；nodeViewMode 是画布全局偏好，也可事后 set_prefs 修改。
+12. 同级排序用 reorder：优先 {"type":"reorder","nodeId":"...","order":10}；也可用 afterSiblingId（null=置顶）。
+13. 折叠 set_collapsed 会隐藏该节点主父链下的全部子孙并重新布局；展开后恢复。
+14. 问图：用 mindmap_query（neighbors|path|stats|orphans|missing_meta）；答完可用 mindmap_highlight 高亮路径；细节用 mindmap_get_node / mindmap_get_edge。禁止编造图中没有的事实。
 
 当前空间上下文（摘要）：
 ${JSON.stringify(spatial, null, 0).slice(0, 6000)}

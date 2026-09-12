@@ -17,6 +17,8 @@ import {
   nodeFunction,
   OP_SCHEMA_DOC,
   OP_TYPES,
+  NodeIconSchema,
+  NodeViewModeSchema,
 } from "@mind-map/shared";
 import { hierarchyFingerprint, layout } from "@mind-map/layout-engine";
 
@@ -481,8 +483,10 @@ function estimateOverlaps(
   nodeViewMode: string,
   anchorId: string | null,
 ) {
-  const w = nodeViewMode === "card" ? 180 : 120;
-  const h = nodeViewMode === "card" ? 72 : 36;
+  const w =
+    nodeViewMode === "card" ? 180 : nodeViewMode === "topology" ? 88 : 120;
+  const h =
+    nodeViewMode === "card" ? 72 : nodeViewMode === "topology" ? 64 : 36;
   const ids = nodes
     .filter((n) => !n.deletedAt && n.id !== anchorId && positions[n.id])
     .map((n) => n.id);
@@ -770,11 +774,30 @@ export async function runTool(
         rawArgs.rootText != null && String(rawArgs.rootText).trim()
           ? String(rawArgs.rootText)
           : undefined;
-      const g = ctx.store.createCanvas(title, rootText);
+      const prefsArg =
+        rawArgs.prefs && typeof rawArgs.prefs === "object"
+          ? (rawArgs.prefs as Record<string, unknown>)
+          : undefined;
+      const viewParsed = NodeViewModeSchema.safeParse(
+        rawArgs.nodeViewMode ?? prefsArg?.nodeViewMode,
+      );
+      const g = ctx.store.createCanvas(
+        title,
+        rootText,
+        viewParsed.success ? { nodeViewMode: viewParsed.data } : undefined,
+      );
       return {
         ok: true,
-        canvas: { id: g.canvas.id, title: g.canvas.title, rev: g.canvas.rev },
-        hint: "Canvas is empty visually. Create top-level nodes with {type:'create_node', text:'...'} (omit parentId). Use parentId only when nesting under an existing visible node.",
+        canvas: {
+          id: g.canvas.id,
+          title: g.canvas.title,
+          rev: g.canvas.rev,
+          prefs: { nodeViewMode: g.canvas.prefs.nodeViewMode },
+        },
+        hint:
+          g.canvas.prefs.nodeViewMode === "topology"
+            ? "Topology canvas: create NE nodes with icon:'router'. Omit parentId for top-level. Prefer straight hierarchy/relation links."
+            : "Canvas is empty visually. Create top-level nodes with {type:'create_node', text:'...'} (omit parentId). Use parentId only when nesting under an existing visible node.",
       };
     }
 
@@ -1506,20 +1529,12 @@ export async function runTool(
           "edge_note",
           "all",
         ],
-        nodeIcons: [
-          "server",
-          "database",
-          "cloud",
-          "person",
-          "folder",
-          "doc",
-          "link",
-          "warning",
-          "check",
-          "star",
-          "gear",
-          "globe",
-        ],
+        nodeIcons: NodeIconSchema.options,
+        nodeViewModes: NodeViewModeSchema.options,
+        createCanvas: {
+          nodeViewMode:
+            "Optional on mindmap_create_canvas (canvas-global). Also changeable later via set_prefs.",
+        },
         edgeLineStyles: ["solid", "dashed", "dotted"],
         edgeDirections: ["forward", "both", "none"],
         getSubgraph: {

@@ -25,8 +25,10 @@ export type CanvasUi = {
   dragBranchTitle: string;
   bubble: string;
   card: string;
+  topology: string;
   bubbleTitle: string;
   cardTitle: string;
+  topologyTitle: string;
   unpin: string;
   unpinTitle: string;
   undo: string;
@@ -69,8 +71,10 @@ const zh: CanvasUi = {
   dragBranchTitle: "整枝拖拽：节点与子孙一起移动 (B)",
   bubble: "气泡",
   card: "卡片",
+  topology: "拓扑",
   bubbleTitle: "气泡视图：精简标题",
   cardTitle: "卡片视图：展开属性面板",
+  topologyTitle: "拓扑视图：路由器图标 + 链路",
   unpin: "解钉",
   unpinTitle: "取消钉住：让选中节点重新参与自动布局",
   undo: "撤销",
@@ -113,8 +117,10 @@ const en: CanvasUi = {
   dragBranchTitle: "Move node with descendants (B)",
   bubble: "Bubble",
   card: "Card",
+  topology: "Topology",
   bubbleTitle: "Bubble view: title only",
   cardTitle: "Card view: property sheet",
+  topologyTitle: "Topology view: router icons + links",
   unpin: "Unpin",
   unpinTitle: "Unpin selected node for auto layout",
   undo: "Undo",

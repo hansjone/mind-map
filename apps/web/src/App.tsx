@@ -238,14 +238,23 @@ export function App() {
         </button>
         <button
           type="button"
-          onClick={() =>
-            void setPrefs({
-              nodeViewMode:
-                canvas?.prefs.nodeViewMode !== "bubble" ? "bubble" : "card",
-            })
-          }
+          onClick={() => {
+            const cur = canvas?.prefs.nodeViewMode ?? "card";
+            const next =
+              cur === "bubble"
+                ? "card"
+                : cur === "card"
+                  ? "topology"
+                  : "bubble";
+            void setPrefs({ nodeViewMode: next });
+          }}
         >
-          模式: {canvas?.prefs.nodeViewMode !== "bubble" ? "卡片" : "气泡"}
+          模式:{" "}
+          {canvas?.prefs.nodeViewMode === "bubble"
+            ? "气泡"
+            : canvas?.prefs.nodeViewMode === "topology"
+              ? "拓扑"
+              : "卡片"}
         </button>
         <button
           type="button"

@@ -1,12 +1,25 @@
 import type { MindNode, StylePreset } from "@mind-map/shared";
 import { estimateCardSize } from "./node-props/sizing";
 
+export const TOPO_ICON_PX = { comfortable: 36, compact: 30 } as const;
+export const ROUTER_ICON_URL = "/topo/ne-router.png";
+
 /** Keep roughly in sync with layout-engine nodeLayoutSize (comfortable / compact). */
 export function nodeBoxSize(
   n: MindNode,
   dens: boolean,
-  opts?: { asCard?: boolean },
+  opts?: { asCard?: boolean; asTopology?: boolean },
 ): { w: number; h: number } {
+  if (opts?.asTopology) {
+    const icon = dens ? TOPO_ICON_PX.compact : TOPO_ICON_PX.comfortable;
+    const caption = dens ? 18 : 20;
+    const gap = 6;
+    const pad = dens ? 6 : 8;
+    return {
+      w: Math.max(dens ? 72 : 88, icon + pad * 2),
+      h: icon + gap + caption + pad,
+    };
+  }
   if (opts?.asCard || n.stylePreset === "card") {
     return estimateCardSize(n, dens);
   }
@@ -177,4 +190,5 @@ const ICON_GLYPH: Record<string, string> = {
   star: "[★]",
   gear: "[设]",
   globe: "[球]",
+  router: "[路]",
 };

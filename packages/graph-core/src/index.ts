@@ -123,6 +123,7 @@ function promoteChildrenOnDelete(g: MutableGraph, nodeId: string): Op[] {
 export function createEmptyGraph(
   title = "未命名画布",
   rootText?: string,
+  prefsOverride?: Partial<CanvasPrefs>,
 ): MutableGraph {
   const canvasId = newId("c");
   const nodeId = newId("n");
@@ -137,6 +138,7 @@ export function createEmptyGraph(
     showHoverCard: true,
     inspectorMode: "selection",
     nodeViewMode: "card",
+    ...prefsOverride,
   };
   const canvas: CanvasMeta = {
     id: canvasId,

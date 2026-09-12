@@ -139,7 +139,7 @@ export function mindmapToolDefinitions(getBase, getCanvasIdForSession, setActive
     {
       name: 'mindmap_create_canvas',
       description:
-        'Create a brand-new mind-map canvas (new id; does NOT overwrite existing canvases), bind it to this chat session, and open it in the 思维导图 tab. Canvas starts visually empty. Top-level nodes: omit parentId.',
+        'Create a brand-new mind-map canvas (new id; does NOT overwrite existing canvases), bind it to this chat session, and open it in the 思维导图 tab. Canvas starts visually empty. Top-level nodes: omit parentId. Optional nodeViewMode (bubble|card|topology) is a canvas-global preference (can also be changed later via set_prefs).',
       parameters: {
         type: 'object',
         additionalProperties: false,
@@ -149,6 +149,12 @@ export function mindmapToolDefinitions(getBase, getCanvasIdForSession, setActive
             type: 'string',
             description:
               'Optional internal label / title sync only — there is no visible root node. Prefer title alone.',
+          },
+          nodeViewMode: {
+            type: 'string',
+            enum: ['bubble', 'card', 'topology'],
+            description:
+              'Canvas-global chrome (bubble|card|topology). Prefer setting when creating a topology map; default card. topology = router icons + straight blue links.',
           },
         },
       },
@@ -636,6 +642,7 @@ There is NO visible root node. Canvas title is metadata only. Internally top-lev
 
 When the user asks to build a map (e.g. 「输出红楼梦人物关系图」):
 1. mindmap_create_canvas({ title: "红楼梦人物关系" }) — ALWAYS creates a NEW canvas id (never overwrites an old one). Opens the right tab on that new canvas.
+   Topology diagrams: mindmap_create_canvas({ title: "…拓扑", nodeViewMode: "topology" }) then nodes with icon:"router".
 2. mindmap_get_spatial_context — orient on the NEW empty canvas
 3. mindmap_apply_direct({ ops: [ {type:"batch_create", nodes:[...]}, {type:"auto_fit"} ] })
 4. Keep adding in small batches; never dump a full tree JSON overwrite

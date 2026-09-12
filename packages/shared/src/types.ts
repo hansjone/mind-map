@@ -29,8 +29,8 @@ export type NodeBadges = z.infer<typeof NodeBadgesSchema>;
 export const InspectorModeSchema = z.enum(["selection", "always"]);
 export type InspectorMode = z.infer<typeof InspectorModeSchema>;
 
-/** Whole-canvas node chrome: bubble titles vs property cards. */
-export const NodeViewModeSchema = z.enum(["bubble", "card"]);
+/** Whole-canvas node chrome: bubble titles vs property cards vs topology icons. */
+export const NodeViewModeSchema = z.enum(["bubble", "card", "topology"]);
 export type NodeViewMode = z.infer<typeof NodeViewModeSchema>;
 
 /** Controlled node icon set (agent/UI). */
@@ -47,6 +47,7 @@ export const NodeIconSchema = z.enum([
   "star",
   "gear",
   "globe",
+  "router",
 ]);
 export type NodeIcon = z.infer<typeof NodeIconSchema>;
 
