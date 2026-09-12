@@ -21,6 +21,47 @@ window.__ModuleLoader__.load({
     const API = '/dsh-mind-map'
     const LOCALE_NS = 'settings.dshMindMap'
     const TAB_ID = 'dsh-mind-map'
+    /** Filled in apply(); also used by resolveHostLang / iframe locale sync. */
+    const runtime = { ctx: null }
+
+    function resolveHostLang() {
+      try {
+        const loc = runtime.ctx && runtime.ctx.locale
+        const snap = loc && typeof loc.getSnapshot === 'function' ? loc.getSnapshot() : null
+        const raw =
+          (snap && (snap.active || snap.locale || snap.preference || snap.lang)) ||
+          (loc && loc.active) ||
+          (document.documentElement && document.documentElement.lang) ||
+          (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) ||
+          ''
+        return String(raw).trim().toLowerCase().startsWith('zh') ? 'zh' : 'en'
+      } catch {
+        try {
+          return String(document.documentElement.lang || '')
+            .toLowerCase()
+            .startsWith('zh')
+            ? 'zh'
+            : 'en'
+        } catch {
+          return 'en'
+        }
+      }
+    }
+
+    function postLocaleToMindmapFrames(lang) {
+      const next = lang === 'zh' ? 'zh' : 'en'
+      const frames = document.querySelectorAll('iframe.dsh-mm-frame')
+      for (const frame of frames) {
+        try {
+          frame.contentWindow?.postMessage(
+            { type: 'dsh-mind-map:locale', lang: next },
+            '*',
+          )
+        } catch {
+          /* ignore */
+        }
+      }
+    }
 
     const DEFAULTS = {
       enabled: true,
@@ -199,6 +240,7 @@ window.__ModuleLoader__.load({
       ).replace(/\/$/, '')
       const q = new URLSearchParams({ embed: '1', _v: String(Date.now()) })
       if (canvasId) q.set('canvasId', String(canvasId))
+      q.set('lang', resolveHostLang())
       // Pass DSH host CSS tokens into the iframe (cross-origin).
       try {
         const root = document.documentElement
@@ -555,6 +597,36 @@ window.__ModuleLoader__.load({
         return () => window.removeEventListener('message', onMsg)
       }, [view, sessionId, canvasId])
 
+      // Keep iframe UI language in sync with DSH (no full reload).
+      useEffect(() => {
+        if (view !== 'canvas' || !src) return undefined
+        const push = () => postLocaleToMindmapFrames(resolveHostLang())
+        push()
+        const onLoad = () => push()
+        const frame = document.querySelector('iframe.dsh-mm-frame')
+        if (frame) frame.addEventListener('load', onLoad)
+        const mo = new MutationObserver(push)
+        mo.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['lang'],
+        })
+        let off = null
+        try {
+          const loc = runtime.ctx && runtime.ctx.locale
+          if (loc && typeof loc.subscribe === 'function') off = loc.subscribe(push)
+          else if (loc && typeof loc.on === 'function') off = loc.on('change', push)
+        } catch {
+          /* ignore */
+        }
+        const timer = setInterval(push, 2000)
+        return () => {
+          if (frame) frame.removeEventListener('load', onLoad)
+          mo.disconnect()
+          clearInterval(timer)
+          if (typeof off === 'function') off()
+        }
+      }, [view, src])
+
       async function backToRoster() {
         if (sessionId) {
           await fetch(`${API}/active`, {
@@ -722,7 +794,7 @@ window.__ModuleLoader__.load({
     }
 
     /** Filled in apply(); settings card uses it to openTab. */
-    const runtime = { ctx: null }
+    // runtime declared near top (locale + iframe helpers)
     /** Suppress roster-on-activate while AI is jumping into a canvas. */
     let aiJumpUntil = 0
     /** Latest AI-requested canvas enter (survives tab remount / event race). */

@@ -24,7 +24,7 @@ import {
 import { drawPropSheet, NodePropOverlay } from "./node-props";
 import { branchPalette, readSystemTheme } from "./system-theme";
 import { useAppStore } from "./store";
-import { canvasUi as U } from "./canvas-ui-text";
+import { useCanvasUi } from "./useCanvasUi";
 
 const NODE_W = 200;
 
@@ -37,6 +37,7 @@ const MINI_W = 168;
 const MINI_H = 118;
 
 export function TopologyCanvas() {
+  const { U } = useCanvasUi();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const miniRef = useRef<HTMLCanvasElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
@@ -676,6 +677,7 @@ export function TopologyCanvas() {
     canvas?.prefs.showRelationEdges,
     canvas?.prefs.nodeBadges,
     imageTick,
+    U,
   ]);
 
   const drawMini = useCallback(() => {
@@ -888,6 +890,7 @@ export function TopologyCanvas() {
     fitView,
     setZoomAroundCenter,
     viewport.zoom,
+    U,
   ]);
 
   const cursor =
