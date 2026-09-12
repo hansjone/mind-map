@@ -9,9 +9,14 @@ export type SystemTheme = {
   bubble: string;
   warn: string;
   error: string;
+  /** Semi-transparent card fill (canvas glass simulation). */
+  glassFill: string;
+  glassBorder: string;
+  glassHighlight: string;
+  glassHeader: string;
 };
 
-const FALLBACK: SystemTheme = {
+const FALLBACK_DARK: SystemTheme = {
   bgBase: "#101014",
   bgLayer1: "#1b1e28",
   labelPrimary: "#f4f5f7",
@@ -21,7 +26,40 @@ const FALLBACK: SystemTheme = {
   bubble: "rgba(37,42,58,0.9)",
   warn: "#f59e5b",
   error: "#ef4444",
+  glassFill: "rgba(28, 32, 44, 0.72)",
+  glassBorder: "rgba(255, 255, 255, 0.14)",
+  glassHighlight: "rgba(255, 255, 255, 0.1)",
+  glassHeader: "rgba(255, 255, 255, 0.045)",
 };
+
+const FALLBACK_LIGHT: SystemTheme = {
+  bgBase: "#f4f5f7",
+  bgLayer1: "#ffffff",
+  labelPrimary: "#1f2329",
+  labelSecondary: "#646a73",
+  brand: "#5e6ad2",
+  border: "rgba(0,0,0,0.08)",
+  bubble: "rgba(255,255,255,0.92)",
+  warn: "#d97706",
+  error: "#dc2626",
+  glassFill: "rgba(255, 255, 255, 0.78)",
+  glassBorder: "rgba(0, 0, 0, 0.1)",
+  glassHighlight: "rgba(255, 255, 255, 0.65)",
+  glassHeader: "rgba(0, 0, 0, 0.03)",
+};
+
+function detectColorScheme(): "light" | "dark" {
+  try {
+    const ds = document.documentElement.dataset.colorScheme;
+    if (ds === "light" || ds === "dark") return ds;
+    if (matchMedia("(prefers-color-scheme: light)").matches) return "light";
+  } catch {
+    /* ignore */
+  }
+  return "dark";
+}
+
+const FALLBACK: SystemTheme = FALLBACK_DARK;
 
 const VAR_MAP: { key: keyof SystemTheme; css: string }[] = [
   { key: "bgBase", css: "--dsw-alias-bg-base" },
@@ -58,11 +96,18 @@ export function applyThemeFromQuery(search = window.location.search): void {
 }
 
 export function readSystemTheme(): SystemTheme {
-  const out = { ...FALLBACK };
+  const scheme = detectColorScheme();
+  const base = scheme === "light" ? FALLBACK_LIGHT : FALLBACK_DARK;
+  const out = { ...base };
   for (const { key, css } of VAR_MAP) {
     const v = cssVar(css);
     if (v) out[key] = v;
   }
+  // Glass tokens stay scheme-aware (CSS vars are usually opaque solids).
+  out.glassFill = base.glassFill;
+  out.glassBorder = base.glassBorder;
+  out.glassHighlight = base.glassHighlight;
+  out.glassHeader = base.glassHeader;
   return out;
 }
 

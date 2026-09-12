@@ -76,7 +76,13 @@ export function paintBadgeChip(
   text: string,
   x: number,
   y: number,
-  theme: { labelSecondary: string; border: string; bgLayer1: string },
+  theme: {
+    labelSecondary: string;
+    border: string;
+    bgLayer1: string;
+    glassHeader?: string;
+    glassBorder?: string;
+  },
   zoom: number,
 ): number {
   const padX = 6;
@@ -92,13 +98,55 @@ export function paintBadgeChip(
   ctx.arcTo(x, y + h, x, y, r);
   ctx.arcTo(x, y, x + w, y, r);
   ctx.closePath();
-  ctx.fillStyle = "rgba(255,255,255,0.06)";
+  ctx.fillStyle = theme.glassHeader ?? "rgba(255,255,255,0.06)";
   ctx.fill();
-  ctx.strokeStyle = theme.border;
+  ctx.strokeStyle = theme.glassBorder ?? theme.border;
   ctx.lineWidth = 1 / Math.max(0.5, zoom);
   ctx.stroke();
   ctx.fillStyle = theme.labelSecondary;
   ctx.textBaseline = "middle";
   ctx.fillText(text, x + padX, y + h / 2);
   return w + 4;
+}
+
+/** Soft outer glow in accent hue for glass cards (shadow only — do not change fill alpha). */
+export function paintGlassGlow(
+  ctx: CanvasRenderingContext2D,
+  accent: string,
+  zoom: number,
+  selected?: boolean,
+) {
+  ctx.shadowColor = accent;
+  ctx.shadowBlur = (selected ? 20 : 12) / Math.max(0.5, zoom);
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+}
+
+/** Inner top highlight strip for frosted-glass feel. */
+export function paintGlassHighlight(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  radius: number,
+  highlight: string,
+) {
+  ctx.save();
+  ctx.beginPath();
+  const rr = Math.min(radius, h / 2, w / 2);
+  ctx.moveTo(x + rr, y);
+  ctx.lineTo(x + w - rr, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+  ctx.lineTo(x + w, y + Math.min(h * 0.45, 28));
+  ctx.lineTo(x, y + Math.min(h * 0.45, 28));
+  ctx.lineTo(x, y + rr);
+  ctx.quadraticCurveTo(x, y, x + rr, y);
+  ctx.closePath();
+  const g = ctx.createLinearGradient(x, y, x, y + 28);
+  g.addColorStop(0, highlight);
+  g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = g;
+  ctx.fill();
+  ctx.restore();
 }

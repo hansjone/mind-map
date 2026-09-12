@@ -5,6 +5,8 @@ import {
   fillAccentWash,
   paintAccentRail,
   paintBadgeChip,
+  paintGlassGlow,
+  paintGlassHighlight,
   paintNodeShadow,
 } from "./canvas-chrome";
 import {
@@ -490,19 +492,57 @@ export function TopologyCanvas() {
       if (isFlash && highlightStyle?.nodeGlow !== false) {
         ctx.shadowColor = flashNodeColor;
         ctx.shadowBlur = 14 / viewport.zoom;
+      } else if (cardView) {
+        // Accent bloom pass (low alpha), then glass body with drop shadow
+        ctx.save();
+        paintGlassGlow(ctx, fill, viewport.zoom, isSel);
+        ctx.globalAlpha = (inGhost ? 0.7 : 1) * (isSel ? 0.28 : 0.16);
+        ctx.fillStyle = fill;
+        drawNodeShape(
+          ctx,
+          "card",
+          x,
+          y,
+          boxW,
+          boxH,
+          dens ? 14 : 16,
+        );
+        ctx.fill();
+        ctx.restore();
+        if (inGhost) ctx.globalAlpha = 0.7;
+        paintNodeShadow(ctx, viewport.zoom, { selected: isSel });
       } else {
         paintNodeShadow(ctx, viewport.zoom, { selected: isSel });
       }
-      ctx.fillStyle = theme.bgLayer1;
+      ctx.fillStyle = cardView ? theme.glassFill : theme.bgLayer1;
       const drawPreset = cardView ? "card" : n.stylePreset;
-      const cornerR = cardView ? 14 : n.stylePreset === "title" ? boxH / 2 : 12;
+      const cornerR = cardView
+        ? dens
+          ? 14
+          : 16
+        : n.stylePreset === "title"
+          ? boxH / 2
+          : 12;
       drawNodeShape(ctx, drawPreset, x, y, boxW, boxH, cornerR);
       ctx.fill();
+      clearShadow(ctx);
+      ctx.globalAlpha = inGhost ? 0.7 : 1;
       fillAccentWash(
         ctx,
         fill,
-        cardView ? 0.1 : n.stylePreset === "title" ? 0.22 : 0.14,
+        cardView ? 0.06 : n.stylePreset === "title" ? 0.22 : 0.14,
       );
+      if (cardView) {
+        paintGlassHighlight(
+          ctx,
+          x,
+          y,
+          boxW,
+          boxH,
+          cornerR,
+          theme.glassHighlight,
+        );
+      }
       if (
         !cardView &&
         n.stylePreset !== "decision" &&
@@ -516,26 +556,38 @@ export function TopologyCanvas() {
       } else {
         ctx.setLineDash([]);
       }
-      ctx.strokeStyle = isForbidden
-        ? theme.warn
-        : isDrop
-          ? theme.brand
-          : !cardView && n.stylePreset === "risk"
-            ? theme.warn
-            : isFlash
-              ? flashNodeColor
-              : isSel || isHover
-                ? theme.brand
-                : fill;
-      ctx.lineWidth =
-        (isDrop ||
-        isFlash ||
-        isSel ||
-        cardView ||
-        n.stylePreset === "title" ||
-        n.stylePreset === "decision"
-          ? 2.4
-          : 1.35) / viewport.zoom;
+      // Card: thin glass border; soft accent only on hover/select (not thick colored frame)
+      if (cardView) {
+        ctx.strokeStyle = isForbidden
+          ? theme.warn
+          : isDrop || isFlash
+            ? theme.brand
+            : isSel || isHover
+              ? fill
+              : theme.glassBorder;
+        ctx.lineWidth =
+          (isDrop || isFlash || isSel || isHover ? 1.6 : 1) / viewport.zoom;
+      } else {
+        ctx.strokeStyle = isForbidden
+          ? theme.warn
+          : isDrop
+            ? theme.brand
+            : n.stylePreset === "risk"
+              ? theme.warn
+              : isFlash
+                ? flashNodeColor
+                : isSel || isHover
+                  ? theme.brand
+                  : fill;
+        ctx.lineWidth =
+          (isDrop ||
+          isFlash ||
+          isSel ||
+          n.stylePreset === "title" ||
+          n.stylePreset === "decision"
+            ? 2.4
+            : 1.35) / viewport.zoom;
+      }
       if (!cardView && n.stylePreset === "muted")
         ctx.globalAlpha = inGhost ? 0.4 : 0.55;
       clearShadow(ctx);
@@ -558,18 +610,18 @@ export function TopologyCanvas() {
             () => setImageTick((t) => t + 1),
           );
         } else {
-          // Match card header so overlay mount doesn't flash empty
-          ctx.fillStyle = "rgba(0,0,0,0.2)";
-          ctx.fillRect(x, y, boxW, 36);
+          // Match glass header so overlay mount doesn't flash empty
+          ctx.fillStyle = theme.glassHeader;
+          ctx.fillRect(x, y, boxW, 40);
           ctx.beginPath();
-          ctx.arc(x + 14, y + 18, 4.5, 0, Math.PI * 2);
+          ctx.arc(x + 16, y + 20, 4, 0, Math.PI * 2);
           ctx.fillStyle = fill;
           ctx.fill();
           ctx.fillStyle = theme.labelPrimary;
-          ctx.font = canvasFont(13, 600);
+          ctx.font = canvasFont(14, 600);
           ctx.textBaseline = "middle";
-          const ph = wrapTextLines(ctx, n.text || U.unnamed, boxW - 40, 1);
-          ctx.fillText(ph[0] ?? "?", x + 26, y + 18);
+          const ph = wrapTextLines(ctx, n.text || U.unnamed, boxW - 44, 1);
+          ctx.fillText(ph[0] ?? "?", x + 28, y + 20);
         }
       } else {
         const padX = 14;

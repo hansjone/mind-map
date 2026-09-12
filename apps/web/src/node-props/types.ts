@@ -28,6 +28,8 @@ export type PropFieldDef = {
   always?: boolean;
   /** Extra height when this row is an image preview. */
   imageRow?: boolean;
+  /** @deprecated Prefer dedicated list UI for description; kept for compat. */
+  advanced?: boolean;
   rowHeight: number;
   isEmpty: (node: MindNode) => boolean;
   preview: (node: MindNode) => string | null;

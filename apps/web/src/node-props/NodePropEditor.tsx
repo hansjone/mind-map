@@ -1,5 +1,15 @@
 import type { MindNode, Op, StylePreset } from "@mind-map/shared";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+import {
+  canonicalDescriptionKey,
+  displayDescriptionKey,
+} from "./description-display";
 import {
   commitField,
   fieldEditorSeed,
@@ -11,6 +21,40 @@ import { uploadImageFile } from "./upload-image";
 import "./node-shell.css";
 
 type ApplyOps = (ops: Op[], summary?: string) => void | Promise<void>;
+
+type KvRow = { id: string; key: string; value: string };
+
+function rowsFromDescription(
+  description: Record<string, unknown> | null | undefined,
+): KvRow[] {
+  if (!description) return [];
+  return Object.entries(description).map(([key, raw], i) => ({
+    id: `${key}-${i}`,
+    key: displayDescriptionKey(key),
+    value:
+      raw == null
+        ? ""
+        : typeof raw === "string"
+          ? raw
+          : typeof raw === "number" || typeof raw === "boolean"
+            ? String(raw)
+            : Array.isArray(raw)
+              ? raw.map(String).join("、")
+              : JSON.stringify(raw),
+  }));
+}
+
+function descriptionFromRows(
+  rows: KvRow[],
+): Record<string, unknown> | null {
+  const out: Record<string, unknown> = {};
+  for (const row of rows) {
+    const k = canonicalDescriptionKey(row.key);
+    if (!k) continue;
+    out[k] = row.value.trim();
+  }
+  return Object.keys(out).length ? out : null;
+}
 
 export function NodePropEditor({
   node,
@@ -39,8 +83,18 @@ export function NodePropEditor({
     () => visiblePropRows(node, forced),
     [node, forced],
   );
+  const mainRows = useMemo(
+    () =>
+      rows.filter(
+        (r) => r.def.id !== "text" && r.def.id !== "description",
+      ),
+    [rows],
+  );
+  const showDescriptionList =
+    !PROP_DESCRIPTION_EMPTY(node) || forced.has("description");
   const addable = useMemo(
-    () => hiddenAddableFields(node, forced),
+    () =>
+      hiddenAddableFields(node, forced).filter((f) => f.id !== "description"),
     [node, forced],
   );
 
@@ -57,9 +111,55 @@ export function NodePropEditor({
     }
   };
 
+  const commitDescription = (next: Record<string, unknown> | null) => {
+    const prev = node.description ?? null;
+    const same =
+      JSON.stringify(prev) === JSON.stringify(next);
+    if (same) return;
+    void applyOps(
+      [
+        {
+          type: "update_node_meta",
+          nodeId: node.id,
+          patch: { description: next },
+        },
+      ],
+      "prop description",
+    );
+    if (!next) {
+      setForced((prev) => {
+        const n = new Set(prev);
+        n.delete("description");
+        return n;
+      });
+    }
+  };
+
+  const renderField = (def: PropFieldDef) => (
+    <FieldRow
+      key={def.id}
+      def={def}
+      node={node}
+      onCommit={(raw) => commit(def.id, raw)}
+      onClear={() => {
+        commit(def.id, "");
+        setForced((prev) => {
+          const next = new Set(prev);
+          next.delete(def.id);
+          return next;
+        });
+      }}
+    />
+  );
+
   return (
     <div
       className={`ns-editor${variant === "panel" ? " ns-editor--panel" : ""}`}
+      style={
+        accent && variant === "overlay"
+          ? ({ "--ns-brand": accent } as CSSProperties)
+          : undefined
+      }
     >
       <div
         className="ns-editor__header"
@@ -116,84 +216,90 @@ export function NodePropEditor({
           </div>
         ) : null}
 
-        <div className="ns-row">
-          <span className="ns-row__label">强调色</span>
-          <div className="ns-row__ctrl">
-            <input
-              type="text"
-              placeholder="#e74c3c"
-              defaultValue={node.accentColor ?? ""}
-              key={`ac-${node.id}-${node.version}`}
-              onBlur={(e) => {
-                const v = e.target.value.trim();
-                const next = v || null;
-                if ((node.accentColor ?? null) === next) return;
-                void applyOps([
-                  {
-                    type: "update_node_meta",
-                    nodeId: node.id,
-                    patch: { accentColor: next as never },
-                  },
-                ]);
-              }}
-            />
-          </div>
-          <span />
-        </div>
-        <div className="ns-row">
-          <span className="ns-row__label">图标</span>
-          <div className="ns-row__ctrl">
-            <select
-              value={node.icon ?? ""}
-              onChange={(e) => {
-                const v = e.target.value;
-                void applyOps([
-                  {
-                    type: "update_node_meta",
-                    nodeId: node.id,
-                    patch: {
-                      icon: (v || null) as never,
-                    },
-                  },
-                ]);
-              }}
-            >
-              <option value="">无</option>
-              <option value="server">🖥 服务器</option>
-              <option value="database">🗄 数据库</option>
-              <option value="cloud">☁ 云</option>
-              <option value="person">👤 人物</option>
-              <option value="folder">📁 文件夹</option>
-              <option value="doc">📄 文档</option>
-              <option value="link">🔗 链接</option>
-              <option value="warning">⚠ 警告</option>
-              <option value="check">✓ 完成</option>
-              <option value="star">★ 星标</option>
-              <option value="gear">⚙ 设置</option>
-              <option value="globe">🌐 全球</option>
-            </select>
-          </div>
-          <span />
-        </div>
+        {variant === "panel" ? (
+          <>
+            <div className="ns-row">
+              <span className="ns-row__label">强调色</span>
+              <div className="ns-row__ctrl">
+                <input
+                  type="text"
+                  placeholder="#e74c3c"
+                  defaultValue={node.accentColor ?? ""}
+                  key={`ac-${node.id}-${node.version}`}
+                  onBlur={(e) => {
+                    const v = e.target.value.trim();
+                    const next = v || null;
+                    if ((node.accentColor ?? null) === next) return;
+                    void applyOps([
+                      {
+                        type: "update_node_meta",
+                        nodeId: node.id,
+                        patch: { accentColor: next as never },
+                      },
+                    ]);
+                  }}
+                />
+              </div>
+              <span />
+            </div>
+            <div className="ns-row">
+              <span className="ns-row__label">图标</span>
+              <div className="ns-row__ctrl">
+                <select
+                  value={node.icon ?? ""}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    void applyOps([
+                      {
+                        type: "update_node_meta",
+                        nodeId: node.id,
+                        patch: {
+                          icon: (v || null) as never,
+                        },
+                      },
+                    ]);
+                  }}
+                >
+                  <option value="">无</option>
+                  <option value="server">🖥 服务器</option>
+                  <option value="database">🗄 数据库</option>
+                  <option value="cloud">☁ 云</option>
+                  <option value="person">👤 人物</option>
+                  <option value="folder">📁 文件夹</option>
+                  <option value="doc">📄 文档</option>
+                  <option value="link">🔗 链接</option>
+                  <option value="warning">⚠ 警告</option>
+                  <option value="check">✓ 完成</option>
+                  <option value="star">★ 星标</option>
+                  <option value="gear">⚙ 设置</option>
+                  <option value="globe">🌐 全球</option>
+                </select>
+              </div>
+              <span />
+            </div>
+          </>
+        ) : null}
 
-        {rows
-          .filter((r) => r.def.id !== "text")
-          .map(({ def }) => (
-            <FieldRow
-              key={def.id}
-              def={def}
-              node={node}
-              onCommit={(raw) => commit(def.id, raw)}
-              onClear={() => {
-                commit(def.id, "");
-                setForced((prev) => {
-                  const next = new Set(prev);
-                  next.delete(def.id);
-                  return next;
-                });
-              }}
-            />
-          ))}
+        {mainRows.map(({ def }) => renderField(def))}
+
+        {showDescriptionList ? (
+          <DescriptionListEditor
+            nodeId={node.id}
+            version={node.version}
+            description={node.description}
+            onCommit={commitDescription}
+          />
+        ) : (
+          <button
+            type="button"
+            className="ns-kv__reveal"
+            onClick={() =>
+              setForced((prev) => new Set(prev).add("description"))
+            }
+          >
+            + 添加属性列表
+          </button>
+        )}
       </div>
 
       {addable.length > 0 ? (
@@ -233,6 +339,98 @@ export function NodePropEditor({
           </button>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function PROP_DESCRIPTION_EMPTY(node: MindNode): boolean {
+  return !node.description || Object.keys(node.description).length === 0;
+}
+
+function DescriptionListEditor({
+  nodeId,
+  version,
+  description,
+  onCommit,
+}: {
+  nodeId: string;
+  version: number;
+  description: Record<string, unknown> | null | undefined;
+  onCommit: (next: Record<string, unknown> | null) => void;
+}) {
+  const [rows, setRows] = useState<KvRow[]>(() =>
+    rowsFromDescription(description),
+  );
+  const rowsRef = useRef(rows);
+  rowsRef.current = rows;
+
+  useEffect(() => {
+    setRows(rowsFromDescription(description));
+  }, [nodeId, version, description]);
+
+  const flush = (next: KvRow[]) => {
+    setRows(next);
+    rowsRef.current = next;
+    onCommit(descriptionFromRows(next));
+  };
+
+  return (
+    <div className="ns-kv" onPointerDown={(e) => e.stopPropagation()}>
+      <div className="ns-kv__title">属性</div>
+      <ul className="ns-kv__list">
+        {rows.map((row) => (
+          <li key={row.id} className="ns-kv__row">
+            <input
+              className="ns-kv__key"
+              value={row.key}
+              placeholder="名称"
+              aria-label="属性名"
+              onChange={(e) => {
+                const key = e.target.value;
+                setRows((prev) =>
+                  prev.map((r) => (r.id === row.id ? { ...r, key } : r)),
+                );
+              }}
+              onBlur={() => onCommit(descriptionFromRows(rowsRef.current))}
+            />
+            <input
+              className="ns-kv__val"
+              value={row.value}
+              placeholder="内容"
+              aria-label="属性值"
+              onChange={(e) => {
+                const value = e.target.value;
+                setRows((prev) =>
+                  prev.map((r) => (r.id === row.id ? { ...r, value } : r)),
+                );
+              }}
+              onBlur={() => onCommit(descriptionFromRows(rowsRef.current))}
+            />
+            <button
+              type="button"
+              className="ns-kv__del"
+              title="删除"
+              onClick={() =>
+                flush(rowsRef.current.filter((r) => r.id !== row.id))
+              }
+            >
+              ×
+            </button>
+          </li>
+        ))}
+      </ul>
+      <button
+        type="button"
+        className="ns-kv__add"
+        onClick={() => {
+          setRows((prev) => [
+            ...prev,
+            { id: `new-${Date.now()}`, key: "", value: "" },
+          ]);
+        }}
+      >
+        + 添加一项
+      </button>
     </div>
   );
 }

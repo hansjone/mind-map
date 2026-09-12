@@ -46,6 +46,7 @@ export function nodeLayoutSize(
     | "tags"
     | "links"
     | "note"
+    | "description"
     | "dueAt"
     | "startAt"
     | "pinned"
@@ -67,20 +68,36 @@ export function nodeLayoutSize(
   const preset: StylePreset = node.stylePreset ?? "default";
   const asCard = Boolean(opts?.asCard) || preset === "card";
   if (asCard) {
-    // Keep in sync with apps/web/src/node-props/sizing.ts
-    const w = dens.nodeW >= 200 ? 288 : 248;
+    // Keep in sync with apps/web/src/node-props/sizing.ts (glass card hierarchy)
+    const cardW = dens.nodeW >= 200 ? 288 : 248;
     const gap = 10;
+    const headerH = 40;
+    const padY = 12;
     let body = 0;
-    if (node.note) body += 32 + gap;
-    if (node.imageUrl) body += 68 + gap;
-    if (node.tags?.length) body += 32 + gap;
-    if (node.links?.length) body += 32 + gap;
-    if (node.startAt != null) body += 32 + gap;
-    if (node.dueAt != null) body += 32 + gap;
-    if (node.pinned) body += 32 + gap;
+    if (node.imageUrl) body += (dens.nodeW >= 200 ? 108 : 90) + gap;
+    if (node.note) body += (dens.nodeW >= 200 ? 48 : 40) + gap;
+    const descCount = node.description
+      ? Math.min(
+          6,
+          Object.values(node.description).filter(
+            (v) => v != null && String(v).trim() !== "",
+          ).length,
+        )
+      : 0;
+    if (descCount) body += descCount * 18 + Math.max(0, descCount - 1) * 4 + gap;
+    const hasFooter =
+      Boolean(node.tags?.length) ||
+      Boolean(node.links?.length) ||
+      node.startAt != null ||
+      node.dueAt != null ||
+      Boolean(node.pinned);
+    if (hasFooter) body += 24 + gap;
     if (body > 0) body -= gap;
-    const h = 36 + 24 + Math.max(body, 12);
-    return { w, h: Math.max(h, dens.nodeW >= 200 ? 100 : 84) };
+    const cardH = headerH + padY * 2 + Math.max(body, 8);
+    return {
+      w: cardW,
+      h: Math.max(cardH, dens.nodeW >= 200 ? 104 : 88),
+    };
   }
   if (preset === "title") {
     w *= 1.2;

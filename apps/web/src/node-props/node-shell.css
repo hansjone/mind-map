@@ -1,11 +1,15 @@
-/* Node property system — card / inspector shell */
+/* Node property system — frosted glass card / inspector shell */
 .ns-editor {
-  --ns-bg: var(--dsw-alias-bg-layer-1, #1b1e28);
-  --ns-border: var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.1));
+  --ns-bg: color-mix(
+    in srgb,
+    var(--dsw-alias-bg-layer-1, #1b1e28) 72%,
+    transparent
+  );
+  --ns-border: rgba(255, 255, 255, 0.14);
   --ns-label: var(--dsw-alias-label-secondary, #a5adb8);
   --ns-text: var(--dsw-alias-label-primary, #f4f5f7);
   --ns-brand: var(--dsw-alias-brand-primary, #5e6ad2);
-  --ns-input: rgba(255, 255, 255, 0.04);
+  --ns-input: rgba(255, 255, 255, 0.06);
   --ns-font: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
     "Noto Sans SC", system-ui, sans-serif;
   display: flex;
@@ -13,11 +17,13 @@
   gap: 0;
   background: var(--ns-bg);
   border: 1px solid var(--ns-border);
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: visible;
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.04) inset,
-    0 10px 32px rgba(0, 0, 0, 0.38);
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 12px 40px rgba(0, 0, 0, 0.42);
   color: var(--ns-text);
   font-family: var(--ns-font);
   font-size: 12.5px;
@@ -33,23 +39,30 @@
   background: transparent;
   border: none;
   border-radius: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .ns-editor__header {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.28) 0%,
-    rgba(0, 0, 0, 0.14) 100%
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 100%
   );
   border-bottom: 1px solid var(--ns-border);
-  border-radius: 14px 14px 0 0;
+  border-radius: 16px 16px 0 0;
   cursor: grab;
   user-select: none;
   overflow: hidden;
+}
+
+.ns-editor--panel .ns-editor__header {
+  border-radius: 0;
+  background: transparent;
 }
 
 .ns-editor__header:active {
@@ -88,6 +101,205 @@
   flex-direction: column;
   gap: 2px;
   padding: 8px 10px 10px;
+}
+
+.ns-meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 4px 10px;
+}
+
+.ns-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  max-width: 100%;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.ns-chip__k {
+  color: var(--ns-label);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.ns-chip__v {
+  color: var(--ns-text);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.ns-kv {
+  margin: 4px 2px 6px;
+  padding: 8px 8px 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ns-kv__title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--ns-label);
+  margin: 0 2px 8px;
+}
+
+.ns-kv__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ns-kv__row {
+  display: grid;
+  grid-template-columns: minmax(64px, 0.34fr) 1fr auto;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ns-kv__row:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.ns-kv__key,
+.ns-kv__val {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid transparent;
+  background: var(--ns-input);
+  color: var(--ns-text);
+  font-family: inherit;
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 6px 8px;
+  outline: none;
+}
+
+.ns-kv__key {
+  color: var(--ns-label);
+  font-weight: 500;
+}
+
+.ns-kv__key:focus,
+.ns-kv__val:focus {
+  border-color: color-mix(in srgb, var(--ns-brand) 70%, transparent);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.ns-kv__del {
+  border: none;
+  background: transparent;
+  color: var(--ns-label);
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.ns-kv__del:hover {
+  opacity: 1;
+  color: var(--ns-text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ns-kv__add,
+.ns-kv__reveal {
+  width: 100%;
+  margin-top: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: var(--ns-label);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.ns-kv__reveal {
+  margin: 6px 2px;
+}
+
+.ns-kv__add:hover,
+.ns-kv__reveal:hover {
+  border-color: var(--ns-brand);
+  color: var(--ns-text);
+}
+
+.ns-advanced {
+  margin: 6px 2px 2px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.ns-advanced > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ns-label);
+}
+
+.ns-advanced > summary::-webkit-details-marker {
+  display: none;
+}
+
+.ns-advanced > summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 6px;
+  transition: transform 0.12s ease;
+}
+
+.ns-advanced[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.ns-advanced[open] > summary {
+  color: var(--ns-text);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ns-advanced__body {
+  padding: 4px 6px 8px;
+}
+
+.ns-advanced__add {
+  width: 100%;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: var(--ns-label);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.ns-advanced__add:hover {
+  border-color: var(--ns-brand);
+  color: var(--ns-text);
 }
 
 .ns-row {
@@ -261,7 +473,13 @@
   /* Open downward so it isn't clipped by siblings / host */
   top: calc(100% + 6px);
   bottom: auto;
-  background: var(--ns-bg);
+  background: color-mix(
+    in srgb,
+    var(--dsw-alias-bg-layer-1, #1b1e28) 88%,
+    transparent
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--ns-border);
   border-radius: 10px;
   padding: 4px;

@@ -1,4 +1,5 @@
 import type { LinkRef, MindNode, Op } from "@mind-map/shared";
+import { descriptionPreviewLine } from "./description-display";
 import type { PropFieldDef, PropFieldId, VisiblePropRow } from "./types";
 
 function hostnameOf(url: string): string {
@@ -48,6 +49,7 @@ function linksToText(links: LinkRef[] | undefined): string {
     .join("\n");
 }
 
+/** Order: title → image → note → meta → footer fields → advanced JSON. */
 export const PROP_FIELDS: PropFieldDef[] = [
   {
     id: "text",
@@ -62,64 +64,6 @@ export const PROP_FIELDS: PropFieldDef[] = [
     ],
   },
   {
-    id: "note",
-    label: "摘要",
-    kind: "textarea",
-    rowHeight: 18,
-    isEmpty: (n) => !n.note?.trim(),
-    preview: (n) => {
-      const t = n.note?.trim();
-      if (!t) return null;
-      return t.length > 48 ? `${t.slice(0, 48)}…` : t;
-    },
-    commit: (nodeId, raw) => [
-      {
-        type: "update_node_meta",
-        nodeId,
-        patch: { note: raw.trim() || null },
-      },
-    ],
-  },
-  {
-    id: "description",
-    label: "结构化描述 (JSON)",
-    kind: "textarea",
-    rowHeight: 36,
-    isEmpty: (n) => !n.description || Object.keys(n.description).length === 0,
-    preview: (n) => {
-      if (!n.description || !Object.keys(n.description).length) return null;
-      const t = JSON.stringify(n.description);
-      return t.length > 48 ? `${t.slice(0, 48)}…` : t;
-    },
-    commit: (nodeId, raw) => {
-      const trimmed = raw.trim();
-      if (!trimmed) {
-        return [
-          {
-            type: "update_node_meta",
-            nodeId,
-            patch: { description: null },
-          },
-        ];
-      }
-      try {
-        const parsed = JSON.parse(trimmed) as unknown;
-        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-          throw new Error("description must be a JSON object");
-        }
-        return [
-          {
-            type: "update_node_meta",
-            nodeId,
-            patch: { description: parsed as Record<string, unknown> },
-          },
-        ];
-      } catch {
-        return [];
-      }
-    },
-  },
-  {
     id: "imageUrl",
     label: "配图",
     kind: "image",
@@ -132,6 +76,25 @@ export const PROP_FIELDS: PropFieldDef[] = [
         type: "update_node_meta",
         nodeId,
         patch: { imageUrl: raw.trim() || null },
+      },
+    ],
+  },
+  {
+    id: "note",
+    label: "摘要",
+    kind: "textarea",
+    rowHeight: 18,
+    isEmpty: (n) => !n.note?.trim(),
+    preview: (n) => {
+      const t = n.note?.trim();
+      if (!t) return null;
+      return t.length > 72 ? `${t.slice(0, 72)}…` : t;
+    },
+    commit: (nodeId, raw) => [
+      {
+        type: "update_node_meta",
+        nodeId,
+        patch: { note: raw.trim() || null },
       },
     ],
   },
@@ -208,6 +171,42 @@ export const PROP_FIELDS: PropFieldDef[] = [
     commit: (nodeId, raw) => {
       const on = raw === "1" || raw === "true";
       return [{ type: "set_pinned", nodeId, pinned: on }];
+    },
+  },
+  {
+    id: "description",
+    label: "属性",
+    kind: "textarea",
+    rowHeight: 36,
+    isEmpty: (n) => !n.description || Object.keys(n.description).length === 0,
+    preview: (n) => descriptionPreviewLine(n.description),
+    commit: (nodeId, raw) => {
+      // Prefer structured list editor; raw string path kept for tooling.
+      const trimmed = raw.trim();
+      if (!trimmed) {
+        return [
+          {
+            type: "update_node_meta",
+            nodeId,
+            patch: { description: null },
+          },
+        ];
+      }
+      try {
+        const parsed = JSON.parse(trimmed) as unknown;
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+          throw new Error("description must be a JSON object");
+        }
+        return [
+          {
+            type: "update_node_meta",
+            nodeId,
+            patch: { description: parsed as Record<string, unknown> },
+          },
+        ];
+      } catch {
+        return [];
+      }
     },
   },
 ];
