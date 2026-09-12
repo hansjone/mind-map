@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "build": "node scripts/check-canvas-cjk.mjs && tsc -p tsconfig.json --noEmit && vite build",
+    "check:cjk": "node scripts/check-canvas-cjk.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "preview": "vite preview",
     "test": "vitest run --passWithNoTests"

@@ -24,6 +24,7 @@ import {
 import { drawPropSheet, NodePropOverlay } from "./node-props";
 import { branchPalette, readSystemTheme } from "./system-theme";
 import { useAppStore } from "./store";
+import { canvasUi as U } from "./canvas-ui-text";
 
 const NODE_W = 200;
 
@@ -82,7 +83,7 @@ export function TopologyCanvas() {
       }
       await el.requestFullscreen();
     } catch {
-      // iframe ??????????? Tab ??
+      // iframe: notify parent Tab fullscreen when needed
       try {
         window.parent?.postMessage({ type: "dsh-mind-map:fullscreen" }, "*");
       } catch {
@@ -566,7 +567,7 @@ export function TopologyCanvas() {
           ctx.fillStyle = theme.labelPrimary;
           ctx.font = canvasFont(13, 600);
           ctx.textBaseline = "middle";
-          const ph = wrapTextLines(ctx, n.text || "???", boxW - 40, 1);
+          const ph = wrapTextLines(ctx, n.text || U.unnamed, boxW - 40, 1);
           ctx.fillText(ph[0] ?? "?", x + 26, y + 18);
         }
       } else {
@@ -585,7 +586,7 @@ export function TopologyCanvas() {
           drawNodeShape(ctx, "default", x + contentLeft, contentTop, iw, ih, 8);
           ctx.clip();
           if (img && img.naturalWidth > 0) {
-            // Contain: ?????????????
+            // Contain: fit image inside box, no crop
             const scale = Math.min(
               iw / img.naturalWidth,
               ih / img.naturalHeight,
@@ -622,7 +623,7 @@ export function TopologyCanvas() {
         ctx.textBaseline = "top";
         const maxW = boxW - contentLeft - 12;
         const maxLines = dens ? 2 : n.stylePreset === "title" ? 2 : 2;
-        const lines = wrapTextLines(ctx, n.text || "???", maxW, maxLines);
+        const lines = wrapTextLines(ctx, n.text || U.unnamed, maxW, maxLines);
         const lineH = fontSize + 3;
         const textBlockH = lines.length * lineH;
         const badges =
@@ -815,8 +816,8 @@ export function TopologyCanvas() {
         const parent = selectedIds[0];
         void applyOps([
           parent
-            ? { type: "create_node", text: "???", parentId: parent }
-            : { type: "create_node", text: "???" },
+            ? { type: "create_node", text: U.newNode, parentId: parent }
+            : { type: "create_node", text: U.newNode },
         ]);
       }
       if (e.key === "ArrowLeft" && selectedIds[0] && !editing) {
@@ -824,7 +825,7 @@ export function TopologyCanvas() {
         void applyOps([
           {
             type: "create_node",
-            text: "?????",
+            text: U.leftChild,
             parentId: selectedIds[0],
             sidePref: -1,
           },
@@ -835,7 +836,7 @@ export function TopologyCanvas() {
         void applyOps([
           {
             type: "create_node",
-            text: "?????",
+            text: U.rightChild,
             parentId: selectedIds[0],
             sidePref: 1,
           },
@@ -860,10 +861,10 @@ export function TopologyCanvas() {
           parentOfSel
             ? {
                 type: "create_node",
-                text: "????",
+                text: U.sibling,
                 parentId: parentOfSel,
               }
-            : { type: "create_node", text: "???" },
+            : { type: "create_node", text: U.newNode },
         ]);
       }
     };
@@ -1073,7 +1074,7 @@ export function TopologyCanvas() {
                 from: fromId,
                 to: hit,
                 kind: "relation",
-                label: "??",
+                label: U.relationLabel,
               },
             ]);
           }
@@ -1106,7 +1107,7 @@ export function TopologyCanvas() {
               },
             ]);
           } else {
-            // Free place ? pin every dragged id (branch = whole subtree, node = one)
+            // Free place -> pin every dragged id (branch = whole subtree, node = one)
             const nextPos = { ...positions };
             const pinOps: {
               type: "set_pinned";
@@ -1165,7 +1166,7 @@ export function TopologyCanvas() {
           void applyOps([
             {
               type: "create_node",
-              text: "???",
+              text: U.newNode,
               ...(selectedIds[0] ? { parentId: selectedIds[0] } : {}),
               sidePref: world.x < 0 ? -1 : 1,
             },
@@ -1178,7 +1179,7 @@ export function TopologyCanvas() {
       <div
         className="canvas-toolbar"
         role="toolbar"
-        aria-label="????"
+        aria-label={U.toolbarAria}
         onPointerDown={(e) => e.stopPropagation()}
       >
         {embed ? (
@@ -1187,10 +1188,10 @@ export function TopologyCanvas() {
               <button
                 type="button"
                 className="canvas-tool-btn"
-                title="??????"
+                title={U.backRosterTitle}
                 onClick={requestBackToRoster}
               >
-                ??
+                {U.backRoster}
               </button>
             </div>
             <div className="canvas-toolbar__sep" />
@@ -1199,9 +1200,9 @@ export function TopologyCanvas() {
         <div className="canvas-toolbar__group">
           {(
             [
-              ["select", "??", "V"],
-              ["pan", "??", "H"],
-              ["link", "??", "C"],
+              ["select", U.toolSelect, "V"],
+              ["pan", U.toolPan, "H"],
+              ["link", U.toolLink, "C"],
             ] as const
           ).map(([mode, label, key]) => (
             <button
@@ -1221,20 +1222,20 @@ export function TopologyCanvas() {
           <button
             type="button"
             className={`canvas-tool-btn${dragScope === "node" ? " is-active" : ""}`}
-            title="???????????? (N)??? Shift ??????"
+            title={U.dragNodeTitle}
             aria-pressed={dragScope === "node"}
             onClick={() => setDragScope("node")}
           >
-            ??
+            {U.dragNode}
           </button>
           <button
             type="button"
             className={`canvas-tool-btn${dragScope === "branch" ? " is-active" : ""}`}
-            title="?????????????? (B)"
+            title={U.dragBranchTitle}
             aria-pressed={dragScope === "branch"}
             onClick={() => setDragScope("branch")}
           >
-            ??
+            {U.dragBranch}
           </button>
         </div>
         <div className="canvas-toolbar__sep" />
@@ -1242,7 +1243,7 @@ export function TopologyCanvas() {
           <button
             type="button"
             className={`canvas-tool-btn${cardView ? "" : " is-active"}`}
-            title="?????????"
+            title={U.bubbleTitle}
             aria-pressed={!cardView}
             disabled={locked}
             onClick={() => {
@@ -1250,12 +1251,12 @@ export function TopologyCanvas() {
               void setPrefs({ nodeViewMode: "bubble" });
             }}
           >
-            ??
+            {U.bubble}
           </button>
           <button
             type="button"
             className={`canvas-tool-btn${cardView ? " is-active" : ""}`}
-            title="???????????"
+            title={U.cardTitle}
             aria-pressed={cardView}
             disabled={locked}
             onClick={() => {
@@ -1263,12 +1264,12 @@ export function TopologyCanvas() {
               void setPrefs({ nodeViewMode: "card" });
             }}
           >
-            ??
+            {U.card}
           </button>
           <button
             type="button"
             className="canvas-tool-btn"
-            title="??????????????????"
+            title={U.unpinTitle}
             disabled={
               locked ||
               !selectedIds[0] ||
@@ -1281,7 +1282,7 @@ export function TopologyCanvas() {
               ]);
             }}
           >
-            ??
+            {U.unpin}
           </button>
         </div>
         <div className="canvas-toolbar__sep" />
@@ -1289,11 +1290,11 @@ export function TopologyCanvas() {
           <button
             type="button"
             className="canvas-tool-btn"
-            title="??"
+            title={U.undo}
             disabled={!lastChangeSetId}
             onClick={() => void undo()}
           >
-            ??
+            {U.undo}
           </button>
         </div>
         <span className="canvas-toolbar__zoom">
@@ -1304,14 +1305,14 @@ export function TopologyCanvas() {
       <div
         className="canvas-controls"
         role="toolbar"
-        aria-label="????"
+        aria-label={U.controlsAria}
         onPointerDown={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           className="canvas-controls__btn"
-          title={fullscreen ? "????" : "??"}
-          aria-label={fullscreen ? "????" : "??"}
+          title={fullscreen ? U.exitFullscreen : U.fullscreen}
+          aria-label={fullscreen ? U.exitFullscreen : U.fullscreen}
           onClick={() => void toggleFullscreen()}
         >
           <FullscreenIcon exit={fullscreen} />
@@ -1319,8 +1320,8 @@ export function TopologyCanvas() {
         <button
           type="button"
           className="canvas-controls__btn"
-          title="?? (+)"
-          aria-label="??"
+          title={U.zoomInTitle}
+          aria-label={U.zoomIn}
           onClick={() => setZoomAroundCenter(viewport.zoom * 1.2)}
         >
           <ZoomInIcon />
@@ -1328,8 +1329,8 @@ export function TopologyCanvas() {
         <button
           type="button"
           className="canvas-controls__btn"
-          title="?? (-)"
-          aria-label="??"
+          title={U.zoomOutTitle}
+          aria-label={U.zoomOut}
           onClick={() => setZoomAroundCenter(viewport.zoom / 1.2)}
         >
           <ZoomOutIcon />
@@ -1337,8 +1338,8 @@ export function TopologyCanvas() {
         <button
           type="button"
           className="canvas-controls__btn"
-          title="???? (F)"
-          aria-label="????"
+          title={U.fitTitle}
+          aria-label={U.fit}
           onClick={fitView}
         >
           <FitIcon />
@@ -1346,8 +1347,8 @@ export function TopologyCanvas() {
         <button
           type="button"
           className={`canvas-controls__btn${locked ? " is-active" : ""}`}
-          title={locked ? "???? (L)" : "???? (L)"}
-          aria-label={locked ? "??" : "??"}
+          title={locked ? U.unlockTitle : U.lockTitle}
+          aria-label={locked ? U.unlock : U.lock}
           aria-pressed={locked}
           onClick={() => setLocked((v) => !v)}
         >
@@ -1413,7 +1414,7 @@ export function TopologyCanvas() {
           // Center-to-center: parent half + child half + breathing room
           const edgeGap = dens ? 100 : 140;
           const addChild = (side: -1 | 1) => {
-            const text = side < 0 ? "?????" : "?????";
+            const text = side < 0 ? U.leftChild : U.rightChild;
             const childW = dens ? 160 : 200;
             void applyOps([
               {
@@ -1434,7 +1435,7 @@ export function TopologyCanvas() {
                 type="button"
                 className="node-handle node-handle--left"
                 style={{ left: cx - hw - 14, top: cy - 10 }}
-                title="???????"
+                title={U.addLeftChildTitle}
                 onClick={() => addChild(-1)}
               >
                 +
@@ -1443,7 +1444,7 @@ export function TopologyCanvas() {
                 type="button"
                 className="node-handle node-handle--right"
                 style={{ left: cx + hw - 2, top: cy - 10 }}
-                title="???????"
+                title={U.addRightChildTitle}
                 onClick={() => addChild(1)}
               >
                 +
@@ -1498,10 +1499,10 @@ export function TopologyCanvas() {
 
       <div className="canvas-hint muted">
         {locked
-          ? "??? · ???/??/??"
+          ? U.hintLocked
           : dragScope === "node"
-            ? "??? · ??????? · Shift ???? · Esc ??"
-            : "??? · ???? · ?????? · N ?? · Esc ??"}
+            ? U.hintNodeDrag
+            : U.hintBranchDrag}
       </div>
     </div>
   );
