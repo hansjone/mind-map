@@ -45,18 +45,11 @@ export function drawPropSheet(
 ) {
   const { w, h } = estimateCardSize(node, dens);
   const radius = dens ? 14 : 16;
-  const z = Math.max(0.5, zoom);
 
   ctx.save();
   ctx.beginPath();
   roundRectPath(ctx, x, y, w, h, radius);
   ctx.clip();
-
-  // Soft top accent hairline (identity without thick colored frame)
-  ctx.fillStyle = accent;
-  ctx.globalAlpha = 0.85;
-  ctx.fillRect(x, y, w, 2.5);
-  ctx.globalAlpha = 1;
 
   // Low zoom: title only
   if (zoom < 0.35) {
@@ -78,11 +71,7 @@ export function drawPropSheet(
     return;
   }
 
-  // Glass header band
-  ctx.fillStyle = theme.glassHeader;
-  ctx.fillRect(x, y, w, CARD_HEADER_H);
-
-  // Accent dot with soft halo
+  // Title row (same surface as body — no striped header band)
   ctx.beginPath();
   ctx.arc(x + 16, y + CARD_HEADER_H / 2, 7, 0, Math.PI * 2);
   ctx.fillStyle = accent;
@@ -114,15 +103,7 @@ export function drawPropSheet(
     });
   }
 
-  // Hairline under header
-  ctx.strokeStyle = theme.glassBorder;
-  ctx.lineWidth = 1 / z;
-  ctx.beginPath();
-  ctx.moveTo(x + CARD_PAD_X, y + CARD_HEADER_H);
-  ctx.lineTo(x + w - CARD_PAD_X, y + CARD_HEADER_H);
-  ctx.stroke();
-
-  let cy = y + CARD_HEADER_H + CARD_PAD_Y;
+  let cy = y + CARD_HEADER_H + Math.max(4, CARD_PAD_Y - 4);
   const contentW = w - CARD_PAD_X * 2;
 
   // Hero image
@@ -179,21 +160,12 @@ export function drawPropSheet(
     cy += lines.length * lh + CARD_GAP;
   }
 
-  // Description as readable key-value list (never raw JSON)
+  // Description as one compact key-value block (no row dividers)
   const chips = descriptionChips(node.description);
   if (chips.length) {
+    const rowGap = dens ? 4 : 5;
     for (let i = 0; i < chips.length; i++) {
       const chip = chips[i]!;
-      if (i > 0) {
-        ctx.strokeStyle = theme.glassBorder;
-        ctx.globalAlpha = 0.55;
-        ctx.lineWidth = 1 / z;
-        ctx.beginPath();
-        ctx.moveTo(x + CARD_PAD_X, cy - 2);
-        ctx.lineTo(x + w - CARD_PAD_X, cy - 2);
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-      }
       ctx.fillStyle = theme.labelSecondary;
       ctx.font = canvasFont(10, 500);
       ctx.textBaseline = "middle";
@@ -207,7 +179,7 @@ export function drawPropSheet(
       const vw = contentW - labelW - 10;
       const vLines = wrapTextLines(ctx, chip.value, vw, 1);
       ctx.fillText(vLines[0] ?? chip.value, vx, cy + CARD_CHIP_H / 2);
-      cy += CARD_CHIP_H + 6;
+      cy += CARD_CHIP_H + rowGap;
     }
     cy += CARD_GAP - 4;
   }

@@ -5,8 +5,6 @@ import {
   fillAccentWash,
   paintAccentRail,
   paintBadgeChip,
-  paintGlassGlow,
-  paintGlassHighlight,
   paintNodeShadow,
 } from "./canvas-chrome";
 import {
@@ -606,24 +604,11 @@ export function TopologyCanvas() {
         ctx.shadowColor = flashNodeColor;
         ctx.shadowBlur = 14 / viewport.zoom;
       } else if (cardView) {
-        // Accent bloom pass (low alpha), then glass body with drop shadow
-        ctx.save();
-        paintGlassGlow(ctx, fill, viewport.zoom, isSel);
-        ctx.globalAlpha = (inGhost ? 0.7 : 1) * (isSel ? 0.28 : 0.16);
-        ctx.fillStyle = fill;
-        drawNodeShape(
-          ctx,
-          "card",
-          x,
-          y,
-          boxW,
-          boxH,
-          dens ? 14 : 16,
-        );
-        ctx.fill();
-        ctx.restore();
-        if (inGhost) ctx.globalAlpha = 0.7;
-        paintNodeShadow(ctx, viewport.zoom, { selected: isSel });
+        // Solid body + deep drop shadow (skip floaty accent bloom)
+        paintNodeShadow(ctx, viewport.zoom, {
+          selected: isSel,
+          weight: "heavy",
+        });
       } else {
         paintNodeShadow(ctx, viewport.zoom, { selected: isSel });
       }
@@ -640,22 +625,12 @@ export function TopologyCanvas() {
       ctx.fill();
       clearShadow(ctx);
       ctx.globalAlpha = inGhost ? 0.7 : 1;
+      // Soft accent tint only — no header band / dividers
       fillAccentWash(
         ctx,
         fill,
-        cardView ? 0.06 : n.stylePreset === "title" ? 0.22 : 0.14,
+        cardView ? 0.08 : n.stylePreset === "title" ? 0.22 : 0.14,
       );
-      if (cardView) {
-        paintGlassHighlight(
-          ctx,
-          x,
-          y,
-          boxW,
-          boxH,
-          cornerR,
-          theme.glassHighlight,
-        );
-      }
       if (
         !cardView &&
         n.stylePreset !== "decision" &&
@@ -679,7 +654,7 @@ export function TopologyCanvas() {
               ? fill
               : theme.glassBorder;
         ctx.lineWidth =
-          (isDrop || isFlash || isSel || isHover ? 1.6 : 1) / viewport.zoom;
+          (isDrop || isFlash || isSel || isHover ? 1.8 : 1.25) / viewport.zoom;
       } else {
         ctx.strokeStyle = isForbidden
           ? theme.warn
@@ -723,9 +698,7 @@ export function TopologyCanvas() {
             () => setImageTick((t) => t + 1),
           );
         } else {
-          // Match glass header so overlay mount doesn't flash empty
-          ctx.fillStyle = theme.glassHeader;
-          ctx.fillRect(x, y, boxW, 40);
+          // Title-only placeholder under HTML overlay (same flat surface)
           ctx.beginPath();
           ctx.arc(x + 16, y + 20, 4, 0, Math.PI * 2);
           ctx.fillStyle = fill;

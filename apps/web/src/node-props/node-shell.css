@@ -2,10 +2,10 @@
 .ns-editor {
   --ns-bg: color-mix(
     in srgb,
-    var(--dsw-alias-bg-layer-1, #1b1e28) 72%,
-    transparent
+    #2d3444 88%,
+    var(--dsw-alias-bg-layer-1, #1b1e28)
   );
-  --ns-border: rgba(255, 255, 255, 0.14);
+  --ns-border: rgba(255, 255, 255, 0.2);
   --ns-label: var(--dsw-alias-label-secondary, #a5adb8);
   --ns-text: var(--dsw-alias-label-primary, #f4f5f7);
   --ns-brand: var(--dsw-alias-brand-primary, #5e6ad2);
@@ -19,11 +19,11 @@
   border: 1px solid var(--ns-border);
   border-radius: 16px;
   overflow: visible;
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.1) inset,
-    0 12px 40px rgba(0, 0, 0, 0.42);
+    0 10px 28px rgba(0, 0, 0, 0.45),
+    0 22px 56px rgba(0, 0, 0, 0.38);
   color: var(--ns-text);
   font-family: var(--ns-font);
   font-size: 12.5px;
@@ -47,13 +47,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 14px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  border-bottom: 1px solid var(--ns-border);
+  padding: 12px 14px 8px;
+  background: transparent;
+  border-bottom: none;
   border-radius: 16px 16px 0 0;
   cursor: grab;
   user-select: none;
@@ -140,10 +136,10 @@
 
 .ns-kv {
   margin: 4px 2px 6px;
-  padding: 8px 8px 10px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 2px 6px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
 }
 
 .ns-kv__title {
@@ -160,7 +156,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 4px;
 }
 
 .ns-kv__row {
@@ -168,8 +164,8 @@
   grid-template-columns: minmax(64px, 0.34fr) 1fr auto;
   gap: 6px;
   align-items: center;
-  padding: 6px 2px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 2px 0;
+  border-top: none;
 }
 
 .ns-kv__row:first-child {

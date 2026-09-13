@@ -14,14 +14,25 @@ export function canvasFont(
 export function paintNodeShadow(
   ctx: CanvasRenderingContext2D,
   zoom: number,
-  opts?: { selected?: boolean },
+  opts?: { selected?: boolean; weight?: "default" | "heavy" },
 ) {
+  const heavy = opts?.weight === "heavy";
+  const z = Math.max(0.5, zoom);
+  if (heavy) {
+    ctx.shadowColor = opts?.selected
+      ? "rgba(0, 0, 0, 0.62)"
+      : "rgba(0, 0, 0, 0.5)";
+    ctx.shadowBlur = (opts?.selected ? 28 : 22) / z;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 7 / z;
+    return;
+  }
   ctx.shadowColor = opts?.selected
     ? "rgba(0, 0, 0, 0.45)"
     : "rgba(0, 0, 0, 0.28)";
-  ctx.shadowBlur = (opts?.selected ? 18 : 12) / Math.max(0.5, zoom);
+  ctx.shadowBlur = (opts?.selected ? 18 : 12) / z;
   ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 3 / Math.max(0.5, zoom);
+  ctx.shadowOffsetY = 3 / z;
 }
 
 export function clearShadow(ctx: CanvasRenderingContext2D) {
@@ -122,7 +133,7 @@ export function paintGlassGlow(
   ctx.shadowOffsetY = 0;
 }
 
-/** Inner top highlight strip for frosted-glass feel. */
+/** Soft top sheen — keep short so it does not read as a header divider. */
 export function paintGlassHighlight(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -135,17 +146,19 @@ export function paintGlassHighlight(
   ctx.save();
   ctx.beginPath();
   const rr = Math.min(radius, h / 2, w / 2);
+  const band = Math.min(12, h * 0.2);
   ctx.moveTo(x + rr, y);
   ctx.lineTo(x + w - rr, y);
   ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
-  ctx.lineTo(x + w, y + Math.min(h * 0.45, 28));
-  ctx.lineTo(x, y + Math.min(h * 0.45, 28));
+  ctx.lineTo(x + w, y + band);
+  ctx.lineTo(x, y + band);
   ctx.lineTo(x, y + rr);
   ctx.quadraticCurveTo(x, y, x + rr, y);
   ctx.closePath();
-  const g = ctx.createLinearGradient(x, y, x, y + 28);
+  const g = ctx.createLinearGradient(x, y, x, y + band);
   g.addColorStop(0, highlight);
   g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.globalAlpha = 0.55;
   ctx.fillStyle = g;
   ctx.fill();
   ctx.restore();

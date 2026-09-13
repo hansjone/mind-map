@@ -26,10 +26,11 @@ const FALLBACK_DARK: SystemTheme = {
   bubble: "rgba(37,42,58,0.9)",
   warn: "#f59e5b",
   error: "#ef4444",
-  glassFill: "rgba(28, 32, 44, 0.72)",
-  glassBorder: "rgba(255, 255, 255, 0.14)",
-  glassHighlight: "rgba(255, 255, 255, 0.1)",
-  glassHeader: "rgba(255, 255, 255, 0.045)",
+  // Elevated card surface — clearly above canvas, not near-black
+  glassFill: "rgba(45, 52, 68, 0.96)",
+  glassBorder: "rgba(255, 255, 255, 0.22)",
+  glassHighlight: "rgba(255, 255, 255, 0.06)",
+  glassHeader: "rgba(255, 255, 255, 0.05)",
 };
 
 const FALLBACK_LIGHT: SystemTheme = {
@@ -42,9 +43,9 @@ const FALLBACK_LIGHT: SystemTheme = {
   bubble: "rgba(255,255,255,0.92)",
   warn: "#d97706",
   error: "#dc2626",
-  glassFill: "rgba(255, 255, 255, 0.78)",
-  glassBorder: "rgba(0, 0, 0, 0.1)",
-  glassHighlight: "rgba(255, 255, 255, 0.65)",
+  glassFill: "rgba(255, 255, 255, 0.96)",
+  glassBorder: "rgba(0, 0, 0, 0.12)",
+  glassHighlight: "rgba(255, 255, 255, 0.4)",
   glassHeader: "rgba(0, 0, 0, 0.03)",
 };
 
