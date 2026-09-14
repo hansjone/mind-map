@@ -3,11 +3,11 @@
  * Canvas Web is local; chat IS a DSH Session (mirror only on the Web).
  */
 
-import { createRequire } from 'node:module'
 import { randomBytes } from 'node:crypto'
 import { homedir } from 'node:os'
-import { join, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { existsSync } from 'node:fs'
 import { createRuntime } from './runtime.js'
 import { createSessionBridge } from './session-bridge.js'
 import { makeMindmapSkill, registerMindmapTools } from './tools.js'
@@ -23,27 +23,37 @@ const DEFAULTS = {
   autoStart: true,
 }
 
-function loadPkg(id) {
-  const homes = [
-    fileURLToPath(import.meta.url),
-    join(process.cwd(), 'package.json'),
-    join(process.env.DSH_HOME || join(homedir(), '.dsh'), 'profiles', 'web', 'package.json'),
+/**
+ * Resolve a host peer package via ESM import (not createRequire).
+ * Linked plugins + dsh.cmd chdir break CJS resolution from import.meta.url;
+ * parallel loader import also races require() against cosmokit's ESM graph.
+ */
+async function importHostPkg(id) {
+  const dshHome = process.env.DSH_HOME || join(homedir(), '.dsh')
+  const scoped = id.startsWith('@')
+  const parts = scoped ? id.split('/') : [id]
+  const candidates = [
+    join(dshHome, 'profiles', 'web', 'node_modules', ...parts, 'lib', 'index.mjs'),
+    join(dshHome, 'profiles', 'web', 'node_modules', ...parts, 'lib', 'index.js'),
   ]
-  const errors = []
-  for (const from of homes) {
+  // Bare import works when the package is installed next to this plugin.
+  try {
+    return await import(id)
+  } catch {
+    // fall through to profile paths
+  }
+  for (const file of candidates) {
+    if (!existsSync(file)) continue
     try {
-      const require = createRequire(from)
-      return require(id)
-    } catch (e) {
-      errors.push(e)
+      return await import(pathToFileURL(file).href)
+    } catch {
+      // try next
     }
   }
-  const err = new Error(`cannot resolve ${id}`)
-  err.cause = errors[0]
-  throw err
+  throw new Error(`cannot resolve ${id}`)
 }
 
-const SchemaMod = loadPkg('@deepseek-ai/schemastery')
+const SchemaMod = await importHostPkg('@deepseek-ai/schemastery')
 const Schema = SchemaMod.default || SchemaMod
 
 export const Config = Schema.object({
