@@ -243,7 +243,7 @@ function escapeXml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function exportSvg(
+export function exportSvg(
   nodes: MindNode[],
   edges: MindEdge[],
   positions: Record<string, { x: number; y: number }>,
@@ -1108,24 +1108,37 @@ export async function runTool(
           snap.canvas.title,
           anchorId,
         );
+        if (format === "png") {
+          // Server has no font/raster stack; return SVG payload plus png mime hint.
+          // Web UI toolbar「PNG」rasterizes the live canvas (CJK-accurate).
+          return {
+            ok: true,
+            format: "svg",
+            requestedFormat: "png",
+            title: snap.canvas.title,
+            mimeType: "image/svg+xml",
+            svg,
+            nodeCount: publicNodes.length,
+            edgeCount: publicEdges.length,
+            hint:
+              "PNG raster needs the web UI toolbar button (system fonts). This tool returns SVG which pastes into docs/PPT; save as .svg or convert locally.",
+          };
+        }
         return {
           ok: true,
-          format: format === "png" ? "svg" : "svg",
+          format: "svg",
           title: snap.canvas.title,
           mimeType: "image/svg+xml",
           svg,
           nodeCount: publicNodes.length,
           edgeCount: publicEdges.length,
-          hint:
-            format === "png"
-              ? "Agent export returns SVG (vector). For raster PNG use the web UI「导出PNG」; SVG pastes into docs/PPT as well."
-              : "SVG can be saved as .svg or opened in browser / Office.",
+          hint: "SVG can be saved as .svg or opened in browser / Office.",
         };
       }
       return {
         ok: false,
         error: "invalid_op",
-        message: 'format must be "json" | "md" | "svg" (png → svg for agents; UI has raster PNG)',
+        message: 'format must be "json" | "md" | "svg" | "png"',
       };
     }
 

@@ -8,7 +8,7 @@ export const ROUTER_ICON_URL = "/topo/ne-router.png";
 export function nodeBoxSize(
   n: MindNode,
   dens: boolean,
-  opts?: { asCard?: boolean; asTopology?: boolean },
+  opts?: { asCard?: boolean; asTopology?: boolean; expanded?: boolean },
 ): { w: number; h: number } {
   if (opts?.asTopology) {
     const icon = dens ? TOPO_ICON_PX.compact : TOPO_ICON_PX.comfortable;
@@ -21,7 +21,7 @@ export function nodeBoxSize(
     };
   }
   if (opts?.asCard || n.stylePreset === "card") {
-    return estimateCardSize(n, dens);
+    return estimateCardSize(n, dens, new Set(), { expanded: opts?.expanded });
   }
 
   let w = dens ? 168 : 212;

@@ -279,13 +279,48 @@ export function App() {
         <button
           type="button"
           onClick={() => {
-            const el = document.querySelector(".canvas-host canvas") as HTMLCanvasElement | null;
+            const id = canvasId;
+            if (!id) return;
+            const title = (canvas?.title ?? "mindmap").replace(
+              /[\\/:*?"<>|]+/g,
+              "_",
+            );
+            void fetch(`/api/canvases/${id}/export.svg`)
+              .then((r) => {
+                if (!r.ok) throw new Error(String(r.status));
+                return r.text();
+              })
+              .then((svg) => {
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(
+                  new Blob([svg], { type: "image/svg+xml;charset=utf-8" }),
+                );
+                a.download = `${title}.svg`;
+                a.click();
+              })
+              .catch(() => {
+                /* ignore */
+              });
+          }}
+        >
+          导出SVG
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.querySelector(
+              ".canvas-host canvas",
+            ) as HTMLCanvasElement | null;
             if (!el) return;
+            const title = (canvas?.title ?? "mindmap").replace(
+              /[\\/:*?"<>|]+/g,
+              "_",
+            );
             el.toBlob((blob) => {
               if (!blob) return;
               const a = document.createElement("a");
               a.href = URL.createObjectURL(blob);
-              a.download = `${canvas?.title ?? "mindmap"}.png`;
+              a.download = `${title}.png`;
               a.click();
             });
           }}

@@ -506,6 +506,45 @@ input {
   line-height: 1.35;
 }
 
+.prop-tooltip {
+  position: absolute;
+  z-index: 8;
+  max-width: 320px;
+  min-width: 140px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.14));
+  background: color-mix(
+    in srgb,
+    var(--dsw-alias-bg-layer-1, #1b1e28) 94%,
+    transparent
+  );
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 14px 40px rgba(0, 0, 0, 0.48);
+  pointer-events: none;
+  font-family: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", system-ui, sans-serif;
+}
+
+.prop-tooltip__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--dsw-alias-label-secondary, #a5adb8);
+  margin-bottom: 4px;
+}
+
+.prop-tooltip__value {
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--dsw-alias-label-primary, #f4f5f7);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .edit-overlay {
   position: absolute;
   z-index: 6;

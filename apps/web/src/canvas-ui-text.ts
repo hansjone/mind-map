@@ -49,6 +49,10 @@ export type CanvasUi = {
   hintLocked: string;
   hintNodeDrag: string;
   hintBranchDrag: string;
+  exportPng: string;
+  exportPngTitle: string;
+  exportSvg: string;
+  exportSvgTitle: string;
 };
 
 const zh: CanvasUi = {
@@ -73,7 +77,7 @@ const zh: CanvasUi = {
   card: "卡片",
   topology: "拓扑",
   bubbleTitle: "气泡视图：精简标题",
-  cardTitle: "卡片视图：展开属性面板",
+  cardTitle: "卡片视图：单击展开全文 · 悬停属性看详情 · 双击编辑",
   topologyTitle: "拓扑视图：路由器图标 + 链路",
   unpin: "解钉",
   unpinTitle: "取消钉住：让选中节点重新参与自动布局",
@@ -95,6 +99,10 @@ const zh: CanvasUi = {
   hintLocked: "已锁定 · 仅浏览/缩放/平移",
   hintNodeDrag: "单点拖 · 只移动当前节点 · Shift 临时单点 · Esc 取消",
   hintBranchDrag: "整枝拖 · 空白钉住 · 落到节点换父 · N 单点 · Esc 取消",
+  exportPng: "PNG",
+  exportPngTitle: "导出 PNG（先适应画布再截取）",
+  exportSvg: "SVG",
+  exportSvgTitle: "导出 SVG 矢量图",
 };
 
 const en: CanvasUi = {
@@ -119,7 +127,7 @@ const en: CanvasUi = {
   card: "Card",
   topology: "Topology",
   bubbleTitle: "Bubble view: title only",
-  cardTitle: "Card view: property sheet",
+  cardTitle: "Card view: click expand · hover props · double-click edit",
   topologyTitle: "Topology view: router icons + links",
   unpin: "Unpin",
   unpinTitle: "Unpin selected node for auto layout",
@@ -141,6 +149,10 @@ const en: CanvasUi = {
   hintLocked: "Locked · browse / zoom / pan only",
   hintNodeDrag: "Node drag · Shift temp node · Esc cancel",
   hintBranchDrag: "Branch drag · pin on blank · drop to reparent · N node · Esc cancel",
+  exportPng: "PNG",
+  exportPngTitle: "Export PNG (fit view, then capture)",
+  exportSvg: "SVG",
+  exportSvgTitle: "Export SVG vector",
 };
 
 export const canvasUiTables = { zh, en } as const;

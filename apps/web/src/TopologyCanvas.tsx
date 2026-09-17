@@ -14,6 +14,11 @@ import {
   type DragGhost,
 } from "./drag-subtree";
 import { HoverCard } from "./HoverCard";
+import { PropTooltip } from "./PropTooltip";
+import {
+  exportFitPng,
+  exportSvgFromApi,
+} from "./export-canvas";
 import { getCachedImage } from "./image-cache";
 import {
   drawNodeShape,
@@ -23,7 +28,12 @@ import {
   TOPO_ICON_PX,
   wrapTextLines,
 } from "./node-geometry";
-import { drawPropSheet, NodePropOverlay } from "./node-props";
+import {
+  cardFieldHits,
+  drawPropSheet,
+  NodePropOverlay,
+  type CardChipHit,
+} from "./node-props";
 import { branchPalette, readSystemTheme } from "./system-theme";
 import { useAppStore } from "./store";
 import { useCanvasUi } from "./useCanvasUi";
@@ -51,6 +61,7 @@ export function TopologyCanvas() {
   const highlightEdgeIds = useAppStore((s) => s.highlightEdgeIds);
   const highlightStyle = useAppStore((s) => s.highlightStyle);
   const canvas = useAppStore((s) => s.canvas);
+  const canvasId = useAppStore((s) => s.canvasId);
   const applyOps = useAppStore((s) => s.applyOps);
   const setPrefs = useAppStore((s) => s.setPrefs);
   const patchLocal = useAppStore((s) => s.patchLocal);
@@ -124,6 +135,16 @@ export function TopologyCanvas() {
     text: string;
   } | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
+  /** Card view: click-expanded node shows full field text on the face. */
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
+  /** Card view: double-click opens property editor overlay. */
+  const [propEditId, setPropEditId] = useState<string | null>(null);
+  const [propTip, setPropTip] = useState<{
+    label: string;
+    value: string;
+    x: number;
+    y: number;
+  } | null>(null);
   const [linkPreview, setLinkPreview] = useState<{
     fromId: string;
     x: number;
@@ -184,8 +205,12 @@ export function TopologyCanvas() {
   const topoView = viewMode === "topology";
   const boxOf = useCallback(
     (n: (typeof nodes)[number]) =>
-      nodeBoxSize(n, dens, { asCard: cardView, asTopology: topoView }),
-    [dens, cardView, topoView],
+      nodeBoxSize(n, dens, {
+        asCard: cardView,
+        asTopology: topoView,
+        expanded: cardView && expandedCardId === n.id,
+      }),
+    [dens, cardView, topoView, expandedCardId],
   );
   const nw = dens ? 160 : NODE_W;
 
@@ -684,8 +709,8 @@ export function TopologyCanvas() {
       ctx.globalAlpha = inGhost ? 0.7 : 1;
 
       if (cardView) {
-        const selected = selectedIds.includes(n.id);
-        if (!selected) {
+        const editingProps = propEditId === n.id;
+        if (!editingProps) {
           drawPropSheet(
             ctx,
             n,
@@ -696,6 +721,7 @@ export function TopologyCanvas() {
             dens,
             fill,
             () => setImageTick((t) => t + 1),
+            { expanded: expandedCardId === n.id },
           );
         } else {
           // Title-only placeholder under HTML overlay (same flat surface)
@@ -812,6 +838,8 @@ export function TopologyCanvas() {
     dens,
     cardView,
     topoView,
+    expandedCardId,
+    propEditId,
     boxOf,
     canvas?.prefs.showRelationEdges,
     canvas?.prefs.nodeBadges,
@@ -950,6 +978,15 @@ export function TopologyCanvas() {
         setDragCursor(null);
         return;
       }
+      if (e.key === "Escape") {
+        if (propEditId || expandedCardId || propTip) {
+          e.preventDefault();
+          setPropEditId(null);
+          setExpandedCardId(null);
+          setPropTip(null);
+          return;
+        }
+      }
       if (locked) return;
 
       if (e.key === "Tab" && !locked) {
@@ -1035,6 +1072,11 @@ export function TopologyCanvas() {
     viewport.zoom,
     U,
     withRouterIcon,
+    undo,
+    lastChangeSetId,
+    propEditId,
+    expandedCardId,
+    propTip,
   ]);
 
   const cursor =
@@ -1203,6 +1245,54 @@ export function TopologyCanvas() {
             setDropForbidden(false);
           }
         }
+
+        // Idle hover: property tip in card view, node hover otherwise
+        if (dragRef.current.mode === "none" && !ghost) {
+          const hit = hitTest(world.x, world.y);
+          setHoverId(hit);
+          if (cardView && hit && viewport.zoom >= 0.35 && propEditId !== hit) {
+            const n = nodes.find((x) => x.id === hit);
+            const p = n ? posOf(hit) : null;
+            if (n && p) {
+              const { w: bw, h: bh } = boxOf(n);
+              const localX = world.x - (p.x - bw / 2);
+              const localY = world.y - (p.y - bh / 2);
+              const fields = cardFieldHits(
+                n,
+                dens,
+                expandedCardId === n.id,
+              );
+              const field = fields.find(
+                (f: CardChipHit) =>
+                  localX >= f.x &&
+                  localX <= f.x + f.w &&
+                  localY >= f.y &&
+                  localY <= f.y + f.h,
+              );
+              if (field) {
+                const host = hostRef.current?.getBoundingClientRect();
+                const tipX = host
+                  ? e.clientX - host.left + 14
+                  : hostSize.w / 2 + viewport.x + world.x * viewport.zoom + 14;
+                const tipY = host
+                  ? e.clientY - host.top + 14
+                  : hostSize.h / 2 + viewport.y + world.y * viewport.zoom + 14;
+                setPropTip({
+                  label: field.label,
+                  value: field.fullValue,
+                  x: tipX,
+                  y: tipY,
+                });
+              } else {
+                setPropTip(null);
+              }
+            } else {
+              setPropTip(null);
+            }
+          } else {
+            setPropTip(null);
+          }
+        }
       }}
       onPointerUp={(e) => {
         const world = toWorld(e.clientX, e.clientY);
@@ -1282,6 +1372,14 @@ export function TopologyCanvas() {
           }
         } else if (mode === "node" && fromId && !moved) {
           setSelection([fromId]);
+          if (cardView) {
+            setExpandedCardId((prev) => (prev === fromId ? null : fromId));
+            if (propEditId && propEditId !== fromId) setPropEditId(null);
+          }
+        } else if (mode === "pan" && !moved) {
+          setExpandedCardId(null);
+          setPropEditId(null);
+          setPropTip(null);
         }
 
         dragRef.current.mode = "none";
@@ -1300,6 +1398,13 @@ export function TopologyCanvas() {
         const world = toWorld(e.clientX, e.clientY);
         const hit = hitTest(world.x, world.y);
         if (hit) {
+          if (cardView) {
+            setSelection([hit]);
+            setExpandedCardId(hit);
+            setPropEditId(hit);
+            setPropTip(null);
+            return;
+          }
           const n = nodes.find((x) => x.id === hit)!;
           const host = hostRef.current!.getBoundingClientRect();
           const p = posOf(hit)!;
@@ -1455,6 +1560,49 @@ export function TopologyCanvas() {
             onClick={() => void undo()}
           >
             {U.undo}
+          </button>
+        </div>
+        <div className="canvas-toolbar__sep" />
+        <div className="canvas-toolbar__group">
+          <button
+            type="button"
+            className="canvas-tool-btn"
+            title={U.exportPngTitle}
+            onClick={() => {
+              const el = canvasRef.current;
+              if (!el) return;
+              const title = (canvas?.title ?? "mindmap").replace(
+                /[\\/:*?"<>|]+/g,
+                "_",
+              );
+              void exportFitPng({
+                fitView,
+                canvas: el,
+                filename: `${title}.png`,
+              }).catch(() => {
+                /* ignore */
+              });
+            }}
+          >
+            {U.exportPng}
+          </button>
+          <button
+            type="button"
+            className="canvas-tool-btn"
+            title={U.exportSvgTitle}
+            disabled={!canvasId}
+            onClick={() => {
+              if (!canvasId) return;
+              const title = (canvas?.title ?? "mindmap").replace(
+                /[\\/:*?"<>|]+/g,
+                "_",
+              );
+              void exportSvgFromApi(canvasId, `${title}.svg`).catch(() => {
+                /* ignore */
+              });
+            }}
+          >
+            {U.exportSvg}
           </button>
         </div>
         <span className="canvas-toolbar__zoom">
@@ -1629,13 +1777,22 @@ export function TopologyCanvas() {
           return <HoverCard node={n} x={x} y={y} />;
         })()}
 
+      {cardView && propTip ? (
+        <PropTooltip
+          label={propTip.label}
+          value={propTip.value}
+          x={propTip.x}
+          y={propTip.y}
+        />
+      ) : null}
+
       {!locked &&
         !ghost &&
         cardView &&
-        selectedIds[0] &&
+        propEditId &&
         viewport.zoom >= 0.35 &&
         (() => {
-          const id = selectedIds[0]!;
+          const id = propEditId;
           const n = nodes.find((x) => x.id === id);
           if (!n || n.deletedAt) return null;
           const p = positions[id];

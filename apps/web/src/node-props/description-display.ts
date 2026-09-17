@@ -4,6 +4,8 @@ export type DescChip = {
   key: string;
   label: string;
   value: string;
+  /** Full value without truncation (for tooltips / expanded face). */
+  fullValue: string;
 };
 
 const LABEL_MAP: Record<string, string> = {
@@ -48,25 +50,27 @@ function truncate(s: string, max: number): string {
   return `${t.slice(0, max - 1)}…`;
 }
 
-function formatValue(v: unknown): string | null {
+function formatValueRaw(v: unknown): string | null {
   if (v == null) return null;
   if (typeof v === "string") {
     const t = v.trim();
-    return t ? truncate(t, MAX_VALUE_LEN) : null;
+    return t || null;
   }
   if (typeof v === "number" || typeof v === "boolean") {
-    return truncate(String(v), MAX_VALUE_LEN);
+    return String(v);
   }
   if (Array.isArray(v)) {
     const parts = v
-      .map((x) => (typeof x === "string" || typeof x === "number" ? String(x) : null))
+      .map((x) =>
+        typeof x === "string" || typeof x === "number" ? String(x) : null,
+      )
       .filter(Boolean) as string[];
     if (!parts.length) return null;
-    return truncate(parts.join("、"), MAX_VALUE_LEN);
+    return parts.join("、");
   }
   if (typeof v === "object") {
     try {
-      return truncate(JSON.stringify(v), MAX_VALUE_LEN);
+      return JSON.stringify(v);
     } catch {
       return null;
     }
@@ -98,17 +102,28 @@ export function displayDescriptionKey(key: string): string {
   return labelForKey(key);
 }
 
+export type DescriptionChipsOpts = {
+  max?: number;
+  /** When true, `value` is not truncated (same as fullValue). */
+  full?: boolean;
+};
+
 /** Flatten description object into labeled chips for card / editor face. */
 export function descriptionChips(
   description: Record<string, unknown> | null | undefined,
-  max = MAX_CHIPS,
+  maxOrOpts: number | DescriptionChipsOpts = MAX_CHIPS,
 ): DescChip[] {
+  const opts: DescriptionChipsOpts =
+    typeof maxOrOpts === "number" ? { max: maxOrOpts } : maxOrOpts;
+  const max = opts.max ?? (opts.full ? 64 : MAX_CHIPS);
+  const full = Boolean(opts.full);
   if (!description || typeof description !== "object") return [];
   const out: DescChip[] = [];
   for (const [key, raw] of Object.entries(description)) {
-    const value = formatValue(raw);
-    if (!value) continue;
-    out.push({ key, label: labelForKey(key), value });
+    const fullValue = formatValueRaw(raw);
+    if (!fullValue) continue;
+    const value = full ? fullValue : truncate(fullValue, MAX_VALUE_LEN);
+    out.push({ key, label: labelForKey(key), value, fullValue });
     if (out.length >= max) break;
   }
   return out;

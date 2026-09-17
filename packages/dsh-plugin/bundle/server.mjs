@@ -35,9 +35,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/constants.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/constants.js
 var require_constants = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/constants.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/constants.js"(exports, module) {
     "use strict";
     var BINARY_TYPES = ["nodebuffer", "arraybuffer", "fragments"];
     var hasBlob = typeof Blob !== "undefined";
@@ -58,9 +58,9 @@ var require_constants = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/buffer-util.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/buffer-util.js
 var require_buffer_util = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/buffer-util.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/buffer-util.js"(exports, module) {
     "use strict";
     var { EMPTY_BUFFER } = require_constants();
     var FastBuffer = Buffer[Symbol.species];
@@ -133,9 +133,9 @@ var require_buffer_util = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/limiter.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/limiter.js
 var require_limiter = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/limiter.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/limiter.js"(exports, module) {
     "use strict";
     var kDone = Symbol("kDone");
     var kRun = Symbol("kRun");
@@ -183,9 +183,9 @@ var require_limiter = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/permessage-deflate.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/permessage-deflate.js
 var require_permessage_deflate = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/permessage-deflate.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/permessage-deflate.js"(exports, module) {
     "use strict";
     var zlib = __require("zlib");
     var bufferUtil = require_buffer_util();
@@ -566,9 +566,9 @@ var require_permessage_deflate = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/validation.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/validation.js
 var require_validation = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/validation.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/validation.js"(exports, module) {
     "use strict";
     var { isUtf8 } = __require("buffer");
     var { hasBlob } = require_constants();
@@ -767,9 +767,9 @@ var require_validation = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/receiver.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/receiver.js
 var require_receiver = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/receiver.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/receiver.js"(exports, module) {
     "use strict";
     var { Writable } = __require("stream");
     var PerMessageDeflate2 = require_permessage_deflate();
@@ -1390,9 +1390,9 @@ var require_receiver = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/sender.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/sender.js
 var require_sender = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/sender.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/sender.js"(exports, module) {
     "use strict";
     var { Duplex } = __require("stream");
     var { randomFillSync } = __require("crypto");
@@ -1883,9 +1883,9 @@ var require_sender = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/event-target.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/event-target.js
 var require_event_target = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/event-target.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/event-target.js"(exports, module) {
     "use strict";
     var { kForOnEventAttribute, kListener } = require_constants();
     var kCode = Symbol("kCode");
@@ -2112,9 +2112,9 @@ var require_event_target = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/extension.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/extension.js
 var require_extension = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/extension.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/extension.js"(exports, module) {
     "use strict";
     var { tokenChars } = require_validation();
     function push(dest, name17, elem) {
@@ -2265,9 +2265,9 @@ var require_extension = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/websocket.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/websocket.js
 var require_websocket = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/websocket.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/websocket.js"(exports, module) {
     "use strict";
     var EventEmitter = __require("events");
     var https = __require("https");
@@ -3161,9 +3161,9 @@ var require_websocket = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/stream.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/stream.js
 var require_stream = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/stream.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/stream.js"(exports, module) {
     "use strict";
     var WebSocket2 = require_websocket();
     var { Duplex } = __require("stream");
@@ -3259,9 +3259,9 @@ var require_stream = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/subprotocol.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/subprotocol.js
 var require_subprotocol = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/subprotocol.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/subprotocol.js"(exports, module) {
     "use strict";
     var { tokenChars } = require_validation();
     function parse(header) {
@@ -3304,9 +3304,9 @@ var require_subprotocol = __commonJS({
   }
 });
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/websocket-server.js
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/websocket-server.js
 var require_websocket_server = __commonJS({
-  "node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/websocket-server.js"(exports, module) {
+  "../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/lib/websocket-server.js"(exports, module) {
     "use strict";
     var EventEmitter = __require("events");
     var http = __require("http");
@@ -3705,9 +3705,9 @@ var require_websocket_server = __commonJS({
   }
 });
 
-// node_modules/.pnpm/secure-json-parse@2.7.0/node_modules/secure-json-parse/index.js
+// ../../node_modules/.pnpm/secure-json-parse@2.7.0/node_modules/secure-json-parse/index.js
 var require_secure_json_parse = __commonJS({
-  "node_modules/.pnpm/secure-json-parse@2.7.0/node_modules/secure-json-parse/index.js"(exports, module) {
+  "../../node_modules/.pnpm/secure-json-parse@2.7.0/node_modules/secure-json-parse/index.js"(exports, module) {
     "use strict";
     var hasBuffer = typeof Buffer !== "undefined";
     var suspectProtoRx = /"(?:_|\\u005[Ff])(?:_|\\u005[Ff])(?:p|\\u0070)(?:r|\\u0072)(?:o|\\u006[Ff])(?:t|\\u0074)(?:o|\\u006[Ff])(?:_|\\u005[Ff])(?:_|\\u005[Ff])"\s*:/;
@@ -3809,9 +3809,9 @@ var require_secure_json_parse = __commonJS({
   }
 });
 
-// node_modules/.pnpm/d3-flextree@2.1.2/node_modules/d3-flextree/build/d3-flextree.js
+// ../../node_modules/.pnpm/d3-flextree@2.1.2/node_modules/d3-flextree/build/d3-flextree.js
 var require_d3_flextree = __commonJS({
-  "node_modules/.pnpm/d3-flextree@2.1.2/node_modules/d3-flextree/build/d3-flextree.js"(exports, module) {
+  "../../node_modules/.pnpm/d3-flextree@2.1.2/node_modules/d3-flextree/build/d3-flextree.js"(exports, module) {
     (function(global2, factory) {
       typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : factory(global2.d3 = global2.d3 || {});
     })(exports, (function(exports2) {
@@ -4500,10 +4500,10 @@ var require_d3_flextree = __commonJS({
   }
 });
 
-// apps/server/src/create-server.ts
+// ../../apps/server/src/create-server.ts
 import fs2 from "node:fs";
 
-// node_modules/.pnpm/@hono+node-server@1.19.17_hono@4.13.7/node_modules/@hono/node-server/dist/index.mjs
+// ../../node_modules/.pnpm/@hono+node-server@1.19.17_hono@4.13.7/node_modules/@hono/node-server/dist/index.mjs
 import { createServer as createServerHTTP } from "http";
 import { Http2ServerRequest as Http2ServerRequest2, constants as h2constants } from "http2";
 import { Http2ServerRequest } from "http2";
@@ -5144,7 +5144,7 @@ var serve = (options, listeningListener) => {
   return server;
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/mime.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/mime.js
 var getMimeType = (filename, mimes = baseMimes) => {
   const regexp = /\.([a-zA-Z0-9]+?)$/;
   const match2 = filename.match(regexp);
@@ -5213,7 +5213,7 @@ var _baseMimes = {
 };
 var baseMimes = _baseMimes;
 
-// node_modules/.pnpm/@hono+node-server@1.19.17_hono@4.13.7/node_modules/@hono/node-server/dist/serve-static.mjs
+// ../../node_modules/.pnpm/@hono+node-server@1.19.17_hono@4.13.7/node_modules/@hono/node-server/dist/serve-static.mjs
 import { createReadStream, statSync, existsSync } from "fs";
 import { join } from "path";
 import { versions } from "process";
@@ -5362,7 +5362,7 @@ var serveStatic = (options = { root: "" }) => {
   };
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/compose.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/compose.js
 var compose = (middleware, onError, onNotFound) => {
   return (context, next) => {
     let index = -1;
@@ -5406,10 +5406,10 @@ var compose = (middleware, onError, onNotFound) => {
   };
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/request/constants.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/request/constants.js
 var GET_MATCH_RESULT = /* @__PURE__ */ Symbol();
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/buffer.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/buffer.js
 var bufferToFormData = (arrayBuffer, contentType) => {
   const response = new Response(arrayBuffer, {
     headers: {
@@ -5420,7 +5420,7 @@ var bufferToFormData = (arrayBuffer, contentType) => {
   return response.formData();
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/body.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/body.js
 var MAX_NESTING_DEPTH = 32;
 var MAX_NESTED_OBJECTS = 1e4;
 var isRawRequest = (request) => "headers" in request;
@@ -5518,7 +5518,7 @@ var throwNestingLimitExceeded = () => {
   throw new Error("Nesting limit exceeded");
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/url.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/url.js
 var splitPath = (path3) => {
   const paths = path3.split("/");
   if (paths[0] === "") {
@@ -5724,7 +5724,7 @@ var getQueryParams = (url, key) => {
 };
 var decodeURIComponent_ = decodeURIComponent;
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/request.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/request.js
 var HonoRequest = class {
   /**
    * `.raw` can get the raw Request object.
@@ -6005,7 +6005,7 @@ var HonoRequest = class {
   }
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/html.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/html.js
 var HtmlEscapedCallbackPhase = {
   Stringify: 1,
   BeforeStream: 2,
@@ -6047,7 +6047,7 @@ var resolveCallback = async (str, phase, preserveCallbacks, context, buffer) => 
   }
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/context.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/context.js
 var TEXT_PLAIN = "text/plain; charset=UTF-8";
 var setDefaultContentType = (contentType, headers) => {
   return {
@@ -6473,7 +6473,7 @@ var Context = class {
   };
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router.js
 var METHOD_NAME_ALL = "ALL";
 var METHOD_NAME_ALL_LOWERCASE = "all";
 var METHODS = ["get", "post", "put", "delete", "options", "patch", "query"];
@@ -6481,10 +6481,10 @@ var MESSAGE_MATCHER_IS_ALREADY_BUILT = "Can not add a route since the matcher is
 var UnsupportedPathError = class extends Error {
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/constants.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/utils/constants.js
 var COMPOSED_HANDLER = "__COMPOSED_HANDLER";
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/hono-base.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/hono-base.js
 var notFoundHandler = (c) => {
   return c.text("404 Not Found", 404);
 };
@@ -6862,10 +6862,10 @@ var Hono = class _Hono {
   };
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/utils.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/utils.js
 var createNullObject = () => /* @__PURE__ */ Object.create(null);
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/reg-exp-router/matcher.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/reg-exp-router/matcher.js
 var emptyParam = [];
 function match(method, path3) {
   const matchers = this.buildAllMatchers();
@@ -6886,7 +6886,7 @@ function match(method, path3) {
   return match2(method, path3);
 }
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/reg-exp-router/node.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/reg-exp-router/node.js
 var LABEL_REG_EXP_STR = "[^/]+";
 var ONLY_WILDCARD_REG_EXP_STR = ".*";
 var TAIL_WILDCARD_REG_EXP_STR = "(?:|/.*)";
@@ -6993,7 +6993,7 @@ var Node = class _Node {
   }
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/reg-exp-router/trie.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/reg-exp-router/trie.js
 var Trie = class {
   #context = { varIndex: 0 };
   #root = new Node();
@@ -7057,7 +7057,7 @@ var Trie = class {
   }
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/reg-exp-router/router.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/reg-exp-router/router.js
 var wildcardRegExpCache = createNullObject();
 function buildWildcardRegExp(path3) {
   return wildcardRegExpCache[path3] ??= new RegExp(
@@ -7178,7 +7178,7 @@ var RegExpRouter = class {
   }
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/smart-router/router.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/smart-router/router.js
 var SmartRouter = class {
   name = "SmartRouter";
   #routers = [];
@@ -7233,7 +7233,7 @@ var SmartRouter = class {
   }
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/trie-router/node.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/trie-router/node.js
 var emptyParams = createNullObject();
 var order = 0;
 var Node2 = class _Node2 {
@@ -7393,7 +7393,7 @@ var Node2 = class _Node2 {
   }
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/trie-router/router.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/router/trie-router/router.js
 var TrieRouter = class {
   name = "TrieRouter";
   #node = new Node2();
@@ -7407,7 +7407,7 @@ var TrieRouter = class {
   }
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/hono.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/hono.js
 var Hono2 = class extends Hono {
   /**
    * Creates an instance of the Hono class.
@@ -7422,7 +7422,7 @@ var Hono2 = class extends Hono {
   }
 };
 
-// node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/middleware/cors/index.js
+// ../../node_modules/.pnpm/hono@4.13.7/node_modules/hono/dist/middleware/cors/index.js
 var cors = (options) => {
   const opts = {
     origin: "*",
@@ -7507,11 +7507,11 @@ var cors = (options) => {
   };
 };
 
-// apps/server/src/create-server.ts
+// ../../apps/server/src/create-server.ts
 import path2 from "node:path";
 import { fileURLToPath } from "node:url";
 
-// node_modules/.pnpm/ws@8.21.3/node_modules/ws/wrapper.mjs
+// ../../node_modules/.pnpm/ws@8.21.3/node_modules/ws/wrapper.mjs
 var import_stream3 = __toESM(require_stream(), 1);
 var import_extension = __toESM(require_extension(), 1);
 var import_permessage_deflate = __toESM(require_permessage_deflate(), 1);
@@ -7521,12 +7521,12 @@ var import_subprotocol = __toESM(require_subprotocol(), 1);
 var import_websocket = __toESM(require_websocket(), 1);
 var import_websocket_server = __toESM(require_websocket_server(), 1);
 
-// packages/graph-store/src/index.ts
+// ../graph-store/src/index.ts
 import { DatabaseSync } from "node:sqlite";
 import fs from "node:fs";
 import path from "node:path";
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/external.js
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/external.js
 var external_exports = {};
 __export(external_exports, {
   BRAND: () => BRAND,
@@ -7638,7 +7638,7 @@ __export(external_exports, {
   void: () => voidType
 });
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/util.js
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/util.js
 var util;
 (function(util2) {
   util2.assertEqual = (_) => {
@@ -7772,7 +7772,7 @@ var getParsedType = (data) => {
   }
 };
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/ZodError.js
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/ZodError.js
 var ZodIssueCode = util.arrayToEnum([
   "invalid_type",
   "invalid_literal",
@@ -7890,7 +7890,7 @@ ZodError.create = (issues) => {
   return error;
 };
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/locales/en.js
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/locales/en.js
 var errorMap = (issue, _ctx) => {
   let message;
   switch (issue.code) {
@@ -7993,7 +7993,7 @@ var errorMap = (issue, _ctx) => {
 };
 var en_default = errorMap;
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/errors.js
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/errors.js
 var overrideErrorMap = en_default;
 function setErrorMap(map) {
   overrideErrorMap = map;
@@ -8002,7 +8002,7 @@ function getErrorMap() {
   return overrideErrorMap;
 }
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/parseUtil.js
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/parseUtil.js
 var makeIssue = (params) => {
   const { data, path: path3, errorMaps, issueData } = params;
   const fullPath = [...path3, ...issueData.path || []];
@@ -8112,14 +8112,14 @@ var isDirty = (x) => x.status === "dirty";
 var isValid = (x) => x.status === "valid";
 var isAsync = (x) => typeof Promise !== "undefined" && x instanceof Promise;
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/errorUtil.js
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/errorUtil.js
 var errorUtil;
 (function(errorUtil2) {
   errorUtil2.errToObj = (message) => typeof message === "string" ? { message } : message || {};
   errorUtil2.toString = (message) => typeof message === "string" ? message : message?.message;
 })(errorUtil || (errorUtil = {}));
 
-// node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js
+// ../../node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
   constructor(parent, value, path3, key) {
     this._cachedPath = [];
@@ -11567,7 +11567,7 @@ var coerce = {
 };
 var NEVER = INVALID;
 
-// packages/shared/src/types.ts
+// ../shared/src/types.ts
 var StylePresetSchema = external_exports.enum([
   "default",
   "title",
@@ -11583,7 +11583,7 @@ var RiskProfileSchema = external_exports.enum(["fast", "strict"]);
 var AgentModeSchema = external_exports.enum(["explore", "edit", "critique"]);
 var NodeBadgesSchema = external_exports.enum(["off", "icons", "tags"]);
 var InspectorModeSchema = external_exports.enum(["selection", "always"]);
-var NodeViewModeSchema = external_exports.enum(["bubble", "card"]);
+var NodeViewModeSchema = external_exports.enum(["bubble", "card", "topology"]);
 var NodeIconSchema = external_exports.enum([
   "server",
   "database",
@@ -11596,7 +11596,8 @@ var NodeIconSchema = external_exports.enum([
   "check",
   "star",
   "gear",
-  "globe"
+  "globe",
+  "router"
 ]);
 var EdgeLineStyleSchema = external_exports.enum(["solid", "dashed", "dotted"]);
 var EdgeDirectionSchema = external_exports.enum(["forward", "both", "none"]);
@@ -11706,7 +11707,7 @@ var ErrorCodeSchema = external_exports.enum([
   "mode_denied"
 ]);
 
-// packages/shared/src/ops.ts
+// ../shared/src/ops.ts
 var OP_TYPES = [
   "create_node",
   "batch_create",
@@ -12004,6 +12005,12 @@ var OP_SCHEMA_DOC = {
     },
     {
       type: "create_node",
+      text: "\u6838\u5FC3\u4EA4\u6362\u673A",
+      alias: "core_sw",
+      icon: "router"
+    },
+    {
+      type: "create_node",
       text: "AIOps\u8BCA\u65AD",
       alias: "aiops",
       relations: [{ to: "@restart", label: "\u89E6\u53D1\u91CD\u542F", kind: "relation" }],
@@ -12140,8 +12147,9 @@ var OP_SCHEMA_DOC = {
     unlink: "Remove an edge. Prefer {type:'unlink', edgeId} (exact). Sugar: {from, to, kind?} with id|@alias|title \u2014 server resolves to edgeId when unique. If multiple edges share the same from+to(+kind), sugar is ambiguous \u2192 must use edgeId (label is NOT a disambiguator).",
     set_style_preset: "Field name is stylePreset (not preset). Example: {type:'set_style_preset', nodeId:'@x', stylePreset:'risk'}.",
     restore_node: "Soft-deleted nodes keep their id. Pass that id (or deleted @alias / unique title). Restores compatible incident edges; children already promoted stay under the new parent.",
-    create_node: "Omit parentId for top-level. Optional pos pins immediately. Optional alias. Optional relations[] for outgoing graph edges (not URL links). Optional description object.",
-    update_node_meta: "Patch note/description/tags/links/imageUrl/dueAt/startAt/accentColor/icon/alias. description is a JSON object (knowledge fields). Null clears scalar fields. links = URL bookmarks.",
+    create_node: "Omit parentId for top-level. Optional pos pins immediately. Optional alias. Optional icon (server|database|cloud|person|folder|doc|link|warning|check|star|gear|globe|router). Optional relations[] for outgoing graph edges (not URL links). Optional description object.",
+    update_node_meta: "Patch note/description/tags/links/imageUrl/dueAt/startAt/accentColor/icon/alias. icon enum same as create_node. description is a JSON object (knowledge fields). Null clears scalar fields. links = URL bookmarks.",
+    set_prefs: "Partial canvas prefs: density, branchColoring, nodeViewMode (bubble|card|topology; canvas-global), showHoverCard, nodeBadges, showRelationEdges, riskProfile, themeId, inspectorMode.",
     update_edge_meta: "Patch label/tags/note/weight(1-5)/lineStyle(solid|dashed|dotted)/direction(forward|both|none) on an edge.",
     set_edge_label: "Need edgeId from spatial_context.edges or get_subgraph.",
     reorder: 'Sibling order on primary hierarchy edge. Also unpins the node so auto-layout can move it. Example: {"type":"reorder","nodeId":"\u2026","order":0}. Optional afterSiblingId (null=first).',
@@ -12157,7 +12165,7 @@ var OP_SCHEMA_DOC = {
   }
 };
 
-// packages/shared/src/resolve-ops.ts
+// ../shared/src/resolve-ops.ts
 function newId(prefix = "n") {
   return `${prefix}_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
 }
@@ -12642,7 +12650,7 @@ function buildNodeIdMap(nodes, opts) {
   return map;
 }
 
-// packages/shared/src/graph-query.ts
+// ../shared/src/graph-query.ts
 function nodeFunction(n) {
   const d = n.description;
   if (!d || typeof d !== "object") return void 0;
@@ -13055,7 +13063,7 @@ function resolveQueryNodeRef(nodes, token, opts) {
   };
 }
 
-// packages/shared/src/index.ts
+// ../shared/src/index.ts
 function now() {
   return Date.now();
 }
@@ -13095,7 +13103,7 @@ function computeFitViewport(positions, opts) {
   return { x: -cx * zoom, y: -cy * zoom, zoom };
 }
 
-// packages/graph-core/src/index.ts
+// ../graph-core/src/index.ts
 var GraphError = class extends Error {
   constructor(code, message) {
     super(message);
@@ -13177,7 +13185,7 @@ function promoteChildrenOnDelete(g, nodeId) {
   }
   return inverse;
 }
-function createEmptyGraph(title = "\u672A\u547D\u540D\u753B\u5E03", rootText) {
+function createEmptyGraph(title = "\u672A\u547D\u540D\u753B\u5E03", rootText, prefsOverride) {
   const canvasId = newId2("c");
   const nodeId = newId2("n");
   const t = now();
@@ -13190,7 +13198,8 @@ function createEmptyGraph(title = "\u672A\u547D\u540D\u753B\u5E03", rootText) {
     nodeBadges: "icons",
     showHoverCard: true,
     inspectorMode: "selection",
-    nodeViewMode: "card"
+    nodeViewMode: "card",
+    ...prefsOverride
   };
   const canvas = {
     id: canvasId,
@@ -13970,7 +13979,7 @@ function toSnapshot(g) {
   };
 }
 
-// packages/graph-store/src/index.ts
+// ../graph-store/src/index.ts
 var SCHEMA = `
 CREATE TABLE IF NOT EXISTS meta (
   key TEXT PRIMARY KEY,
@@ -14200,8 +14209,8 @@ CREATE INDEX IF NOT EXISTS idx_snapshots_canvas ON snapshots(canvas_id);
       deletedAt: r.deleted_at != null ? Number(r.deleted_at) : null
     };
   }
-  createCanvas(title, rootText) {
-    const g = createEmptyGraph(title ?? "\u672A\u547D\u540D\u753B\u5E03", rootText);
+  createCanvas(title, rootText, prefsOverride) {
+    const g = createEmptyGraph(title ?? "\u672A\u547D\u540D\u753B\u5E03", rootText, prefsOverride);
     this.persistGraph(g, true);
     this.cache.set(g.canvas.id, g);
     return g;
@@ -14643,7 +14652,7 @@ CREATE INDEX IF NOT EXISTS idx_snapshots_canvas ON snapshots(canvas_id);
   }
 };
 
-// packages/dream-skin/src/skins.json
+// ../dream-skin/src/skins.json
 var skins_default = [
   {
     id: "abyss",
@@ -14975,13 +14984,13 @@ var skins_default = [
   }
 ];
 
-// packages/dream-skin/src/index.ts
+// ../dream-skin/src/index.ts
 var SKINS = skins_default;
 function listSkins() {
   return SKINS;
 }
 
-// node_modules/.pnpm/@ai-sdk+provider@1.1.3/node_modules/@ai-sdk/provider/dist/index.mjs
+// ../../node_modules/.pnpm/@ai-sdk+provider@1.1.3/node_modules/@ai-sdk/provider/dist/index.mjs
 var marker = "vercel.ai.error";
 var symbol = Symbol.for(marker);
 var _a;
@@ -15264,7 +15273,7 @@ var UnsupportedFunctionalityError = class extends AISDKError {
 };
 _a14 = symbol14;
 
-// node_modules/.pnpm/nanoid@3.3.18/node_modules/nanoid/non-secure/index.js
+// ../../node_modules/.pnpm/nanoid@3.3.18/node_modules/nanoid/non-secure/index.js
 var customAlphabet = (alphabet, defaultSize = 21) => {
   return (size = defaultSize) => {
     let id = "";
@@ -15276,7 +15285,7 @@ var customAlphabet = (alphabet, defaultSize = 21) => {
   };
 };
 
-// node_modules/.pnpm/@ai-sdk+provider-utils@2.2.8_zod@3.25.76/node_modules/@ai-sdk/provider-utils/dist/index.mjs
+// ../../node_modules/.pnpm/@ai-sdk+provider-utils@2.2.8_zod@3.25.76/node_modules/@ai-sdk/provider-utils/dist/index.mjs
 var import_secure_json_parse = __toESM(require_secure_json_parse(), 1);
 function combineHeaders(...headers) {
   return headers.reduce(
@@ -15873,7 +15882,7 @@ function withoutTrailingSlash(url) {
   return url == null ? void 0 : url.replace(/\/$/, "");
 }
 
-// node_modules/.pnpm/@ai-sdk+openai@1.3.22_zod@3.25.76/node_modules/@ai-sdk/openai/dist/index.mjs
+// ../../node_modules/.pnpm/@ai-sdk+openai@1.3.22_zod@3.25.76/node_modules/@ai-sdk/openai/dist/index.mjs
 function convertToOpenAIChatMessages({
   prompt,
   useLegacyFunctionCalling = false,
@@ -18613,7 +18622,7 @@ var openai = createOpenAI({
   // strict for OpenAI API
 });
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/Options.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/Options.js
 var ignoreOverride = Symbol("Let zodToJsonSchema decide on which parser to use");
 var defaultOptions = {
   name: void 0,
@@ -18647,7 +18656,7 @@ var getDefaultOptions = (options) => typeof options === "string" ? {
   ...options
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/Refs.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/Refs.js
 var getRefs = (options) => {
   const _options = getDefaultOptions(options);
   const currentPath = _options.name !== void 0 ? [..._options.basePath, _options.definitionPath, _options.name] : _options.basePath;
@@ -18668,7 +18677,7 @@ var getRefs = (options) => {
   };
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/errorMessages.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/errorMessages.js
 function addErrorMessage(res, key, errorMessage, refs) {
   if (!refs?.errorMessages)
     return;
@@ -18684,7 +18693,7 @@ function setResponseValueAndErrors(res, key, value, errorMessage, refs) {
   addErrorMessage(res, key, errorMessage, refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/getRelativePath.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/getRelativePath.js
 var getRelativePath = (pathA, pathB) => {
   let i = 0;
   for (; i < pathA.length && i < pathB.length; i++) {
@@ -18694,7 +18703,7 @@ var getRelativePath = (pathA, pathB) => {
   return [(pathA.length - i).toString(), ...pathB.slice(i)].join("/");
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/any.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/any.js
 function parseAnyDef(refs) {
   if (refs.target !== "openAi") {
     return {};
@@ -18710,7 +18719,7 @@ function parseAnyDef(refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/array.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/array.js
 function parseArrayDef(def, refs) {
   const res = {
     type: "array"
@@ -18734,7 +18743,7 @@ function parseArrayDef(def, refs) {
   return res;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/bigint.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/bigint.js
 function parseBigintDef(def, refs) {
   const res = {
     type: "integer",
@@ -18780,24 +18789,24 @@ function parseBigintDef(def, refs) {
   return res;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/boolean.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/boolean.js
 function parseBooleanDef() {
   return {
     type: "boolean"
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/branded.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/branded.js
 function parseBrandedDef(_def, refs) {
   return parseDef(_def.type._def, refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/catch.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/catch.js
 var parseCatchDef = (def, refs) => {
   return parseDef(def.innerType._def, refs);
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/date.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/date.js
 function parseDateDef(def, refs, overrideDateStrategy) {
   const strategy = overrideDateStrategy ?? refs.dateStrategy;
   if (Array.isArray(strategy)) {
@@ -18856,7 +18865,7 @@ var integerDateParser = (def, refs) => {
   return res;
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/default.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/default.js
 function parseDefaultDef(_def, refs) {
   return {
     ...parseDef(_def.innerType._def, refs),
@@ -18864,12 +18873,12 @@ function parseDefaultDef(_def, refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/effects.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/effects.js
 function parseEffectsDef(_def, refs) {
   return refs.effectStrategy === "input" ? parseDef(_def.schema._def, refs) : parseAnyDef(refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/enum.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/enum.js
 function parseEnumDef(def) {
   return {
     type: "string",
@@ -18877,7 +18886,7 @@ function parseEnumDef(def) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/intersection.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/intersection.js
 var isJsonSchema7AllOfType = (type) => {
   if ("type" in type && type.type === "string")
     return false;
@@ -18919,7 +18928,7 @@ function parseIntersectionDef(def, refs) {
   } : void 0;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/literal.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/literal.js
 function parseLiteralDef(def, refs) {
   const parsedType = typeof def.value;
   if (parsedType !== "bigint" && parsedType !== "number" && parsedType !== "boolean" && parsedType !== "string") {
@@ -18939,7 +18948,7 @@ function parseLiteralDef(def, refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/string.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/string.js
 var emojiRegex2 = void 0;
 var zodPatterns = {
   /**
@@ -19264,7 +19273,7 @@ function stringifyRegExpWithFlags(regex, refs) {
   return pattern;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/record.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/record.js
 function parseRecordDef(def, refs) {
   if (refs.target === "openAi") {
     console.warn("Warning: OpenAI may not support records in schemas! Try an array of key-value pairs instead.");
@@ -19316,7 +19325,7 @@ function parseRecordDef(def, refs) {
   return schema;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/map.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/map.js
 function parseMapDef(def, refs) {
   if (refs.mapStrategy === "record") {
     return parseRecordDef(def, refs);
@@ -19341,7 +19350,7 @@ function parseMapDef(def, refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/nativeEnum.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/nativeEnum.js
 function parseNativeEnumDef(def) {
   const object2 = def.values;
   const actualKeys = Object.keys(def.values).filter((key) => {
@@ -19355,7 +19364,7 @@ function parseNativeEnumDef(def) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/never.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/never.js
 function parseNeverDef(refs) {
   return refs.target === "openAi" ? void 0 : {
     not: parseAnyDef({
@@ -19365,7 +19374,7 @@ function parseNeverDef(refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/null.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/null.js
 function parseNullDef(refs) {
   return refs.target === "openApi3" ? {
     enum: ["null"],
@@ -19375,7 +19384,7 @@ function parseNullDef(refs) {
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/union.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/union.js
 var primitiveMappings = {
   ZodString: "string",
   ZodNumber: "number",
@@ -19443,7 +19452,7 @@ var asAnyOf = (def, refs) => {
   return anyOf.length ? { anyOf } : void 0;
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/nullable.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/nullable.js
 function parseNullableDef(def, refs) {
   if (["ZodString", "ZodNumber", "ZodBigInt", "ZodBoolean", "ZodNull"].includes(def.innerType._def.typeName) && (!def.innerType._def.checks || !def.innerType._def.checks.length)) {
     if (refs.target === "openApi3") {
@@ -19475,7 +19484,7 @@ function parseNullableDef(def, refs) {
   return base && { anyOf: [base, { type: "null" }] };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/number.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/number.js
 function parseNumberDef(def, refs) {
   const res = {
     type: "number"
@@ -19524,7 +19533,7 @@ function parseNumberDef(def, refs) {
   return res;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/object.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/object.js
 function parseObjectDef(def, refs) {
   const forceOptionalIntoNullable = refs.target === "openAi";
   const result = {
@@ -19594,7 +19603,7 @@ function safeIsOptional(schema) {
   }
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/optional.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/optional.js
 var parseOptionalDef = (def, refs) => {
   if (refs.currentPath.toString() === refs.propertyPath?.toString()) {
     return parseDef(def.innerType._def, refs);
@@ -19613,7 +19622,7 @@ var parseOptionalDef = (def, refs) => {
   } : parseAnyDef(refs);
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/pipeline.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/pipeline.js
 var parsePipelineDef = (def, refs) => {
   if (refs.pipeStrategy === "input") {
     return parseDef(def.in._def, refs);
@@ -19633,12 +19642,12 @@ var parsePipelineDef = (def, refs) => {
   };
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/promise.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/promise.js
 function parsePromiseDef(def, refs) {
   return parseDef(def.type._def, refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/set.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/set.js
 function parseSetDef(def, refs) {
   const items = parseDef(def.valueType._def, {
     ...refs,
@@ -19658,7 +19667,7 @@ function parseSetDef(def, refs) {
   return schema;
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/tuple.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/tuple.js
 function parseTupleDef(def, refs) {
   if (def.rest) {
     return {
@@ -19686,24 +19695,24 @@ function parseTupleDef(def, refs) {
   }
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/undefined.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/undefined.js
 function parseUndefinedDef(refs) {
   return {
     not: parseAnyDef(refs)
   };
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/unknown.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/unknown.js
 function parseUnknownDef(refs) {
   return parseAnyDef(refs);
 }
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/readonly.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parsers/readonly.js
 var parseReadonlyDef = (def, refs) => {
   return parseDef(def.innerType._def, refs);
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/selectParser.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/selectParser.js
 var selectParser = (def, typeName, refs) => {
   switch (typeName) {
     case ZodFirstPartyTypeKind.ZodString:
@@ -19779,7 +19788,7 @@ var selectParser = (def, typeName, refs) => {
   }
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parseDef.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/parseDef.js
 function parseDef(def, refs, forceResolution = false) {
   const seenItem = refs.seen.get(def);
   if (refs.override) {
@@ -19835,7 +19844,7 @@ var addMeta = (def, refs, jsonSchema2) => {
   return jsonSchema2;
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js
 var zodToJsonSchema = (schema, options) => {
   const refs = getRefs(options);
   let definitions = typeof options === "object" && options.definitions ? Object.entries(options.definitions).reduce((acc, [name18, schema2]) => ({
@@ -19897,10 +19906,10 @@ var zodToJsonSchema = (schema, options) => {
   return combined;
 };
 
-// node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/index.js
+// ../../node_modules/.pnpm/zod-to-json-schema@3.25.2_zod@3.25.76/node_modules/zod-to-json-schema/dist/esm/index.js
 var esm_default = zodToJsonSchema;
 
-// node_modules/.pnpm/@ai-sdk+ui-utils@1.2.11_zod@3.25.76/node_modules/@ai-sdk/ui-utils/dist/index.mjs
+// ../../node_modules/.pnpm/@ai-sdk+ui-utils@1.2.11_zod@3.25.76/node_modules/@ai-sdk/ui-utils/dist/index.mjs
 var textStreamPart = {
   code: "0",
   name: "text",
@@ -20626,13 +20635,13 @@ function asSchema(schema) {
   return isSchema(schema) ? schema : zodSchema(schema);
 }
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js
 var _globalThis = typeof globalThis === "object" ? globalThis : global;
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/version.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/version.js
 var VERSION = "1.9.0";
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/internal/semver.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/internal/semver.js
 var re = /^(\d+)\.(\d+)\.(\d+)(-(.+))?$/;
 function _makeCompatibilityCheck(ownVersion) {
   var acceptedVersions = /* @__PURE__ */ new Set([ownVersion]);
@@ -20699,7 +20708,7 @@ function _makeCompatibilityCheck(ownVersion) {
 }
 var isCompatible = _makeCompatibilityCheck(VERSION);
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js
 var major = VERSION.split(".")[0];
 var GLOBAL_OPENTELEMETRY_API_KEY = Symbol.for("opentelemetry.js.api." + major);
 var _global = _globalThis;
@@ -20741,7 +20750,7 @@ function unregisterGlobal(type, diag) {
   }
 }
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js
 var __read = function(o, n) {
   var m = typeof Symbol === "function" && o[Symbol.iterator];
   if (!m) return o;
@@ -20821,7 +20830,7 @@ function logProxy(funcName, namespace, args) {
   return logger[funcName].apply(logger, __spreadArray([], __read(args), false));
 }
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/types.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/types.js
 var DiagLogLevel;
 (function(DiagLogLevel2) {
   DiagLogLevel2[DiagLogLevel2["NONE"] = 0] = "NONE";
@@ -20833,7 +20842,7 @@ var DiagLogLevel;
   DiagLogLevel2[DiagLogLevel2["ALL"] = 9999] = "ALL";
 })(DiagLogLevel || (DiagLogLevel = {}));
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js
 function createLogLevelDiagLogger(maxLevel, logger) {
   if (maxLevel < DiagLogLevel.NONE) {
     maxLevel = DiagLogLevel.NONE;
@@ -20858,7 +20867,7 @@ function createLogLevelDiagLogger(maxLevel, logger) {
   };
 }
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/diag.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/diag.js
 var __read2 = function(o, n) {
   var m = typeof Symbol === "function" && o[Symbol.iterator];
   if (!m) return o;
@@ -20950,7 +20959,7 @@ var DiagAPI = (
   })()
 );
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context/context.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context/context.js
 function createContextKey(description) {
   return Symbol.for(description);
 }
@@ -20979,7 +20988,7 @@ var BaseContext = (
 );
 var ROOT_CONTEXT = new BaseContext();
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js
 var __read3 = function(o, n) {
   var m = typeof Symbol === "function" && o[Symbol.iterator];
   if (!m) return o;
@@ -21034,7 +21043,7 @@ var NoopContextManager = (
   })()
 );
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/context.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/context.js
 var __read4 = function(o, n) {
   var m = typeof Symbol === "function" && o[Symbol.iterator];
   if (!m) return o;
@@ -21102,14 +21111,14 @@ var ContextAPI = (
   })()
 );
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js
 var TraceFlags;
 (function(TraceFlags2) {
   TraceFlags2[TraceFlags2["NONE"] = 0] = "NONE";
   TraceFlags2[TraceFlags2["SAMPLED"] = 1] = "SAMPLED";
 })(TraceFlags || (TraceFlags = {}));
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js
 var INVALID_SPANID = "0000000000000000";
 var INVALID_TRACEID = "00000000000000000000000000000000";
 var INVALID_SPAN_CONTEXT = {
@@ -21118,7 +21127,7 @@ var INVALID_SPAN_CONTEXT = {
   traceFlags: TraceFlags.NONE
 };
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js
 var NonRecordingSpan = (
   /** @class */
   (function() {
@@ -21163,7 +21172,7 @@ var NonRecordingSpan = (
   })()
 );
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js
 var SPAN_KEY = createContextKey("OpenTelemetry Context Key SPAN");
 function getSpan(context) {
   return context.getValue(SPAN_KEY) || void 0;
@@ -21185,7 +21194,7 @@ function getSpanContext(context) {
   return (_a17 = getSpan(context)) === null || _a17 === void 0 ? void 0 : _a17.spanContext();
 }
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js
 var VALID_TRACEID_REGEX = /^([0-9a-f]{32})$/i;
 var VALID_SPANID_REGEX = /^[0-9a-f]{16}$/i;
 function isValidTraceId(traceId) {
@@ -21201,7 +21210,7 @@ function wrapSpanContext(spanContext) {
   return new NonRecordingSpan(spanContext);
 }
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js
 var contextApi = ContextAPI.getInstance();
 var NoopTracer = (
   /** @class */
@@ -21251,7 +21260,7 @@ function isSpanContext(spanContext) {
   return typeof spanContext === "object" && typeof spanContext["spanId"] === "string" && typeof spanContext["traceId"] === "string" && typeof spanContext["traceFlags"] === "number";
 }
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js
 var NOOP_TRACER = new NoopTracer();
 var ProxyTracer = (
   /** @class */
@@ -21284,7 +21293,7 @@ var ProxyTracer = (
   })()
 );
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js
 var NoopTracerProvider = (
   /** @class */
   (function() {
@@ -21297,7 +21306,7 @@ var NoopTracerProvider = (
   })()
 );
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js
 var NOOP_TRACER_PROVIDER = new NoopTracerProvider();
 var ProxyTracerProvider = (
   /** @class */
@@ -21323,7 +21332,7 @@ var ProxyTracerProvider = (
   })()
 );
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/status.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace/status.js
 var SpanStatusCode;
 (function(SpanStatusCode2) {
   SpanStatusCode2[SpanStatusCode2["UNSET"] = 0] = "UNSET";
@@ -21331,7 +21340,7 @@ var SpanStatusCode;
   SpanStatusCode2[SpanStatusCode2["ERROR"] = 2] = "ERROR";
 })(SpanStatusCode || (SpanStatusCode = {}));
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/trace.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/api/trace.js
 var API_NAME3 = "trace";
 var TraceAPI = (
   /** @class */
@@ -21374,10 +21383,10 @@ var TraceAPI = (
   })()
 );
 
-// node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace-api.js
+// ../../node_modules/.pnpm/@opentelemetry+api@1.9.0/node_modules/@opentelemetry/api/build/esm/trace-api.js
 var trace = TraceAPI.getInstance();
 
-// node_modules/.pnpm/ai@4.3.16_react@19.2.8_zod@3.25.76/node_modules/ai/dist/index.mjs
+// ../../node_modules/.pnpm/ai@4.3.16_react@19.2.8_zod@3.25.76/node_modules/ai/dist/index.mjs
 var __defProp2 = Object.defineProperty;
 var __export2 = (target, all) => {
   for (var name17 in all)
@@ -25356,13 +25365,23 @@ function trimStartOfStream() {
 }
 var HANGING_STREAM_WARNING_TIME_MS = 15 * 1e3;
 
-// packages/layout-engine/src/index.ts
+// ../layout-engine/src/index.ts
 var import_d3_flextree = __toESM(require_d3_flextree(), 1);
 var DENSITY = {
   comfortable: { gapX: 80, gapY: 40, nodeW: 212, nodeH: 60, pad: 20 },
   compact: { gapX: 52, gapY: 28, nodeW: 168, nodeH: 48, pad: 12 }
 };
 function nodeLayoutSize(node, dens, opts) {
+  if (opts?.asTopology) {
+    const icon = dens.nodeW >= 200 ? 36 : 30;
+    const caption = dens.nodeW >= 200 ? 20 : 18;
+    const gap = 6;
+    const pad = dens.nodeW >= 200 ? 8 : 6;
+    return {
+      w: Math.max(dens.nodeW >= 200 ? 88 : 72, icon + pad * 2),
+      h: icon + gap + caption + pad
+    };
+  }
   let w = dens.nodeW;
   let h = dens.nodeH;
   const hasMeta = Boolean(node.tags?.length) || Boolean(node.links?.length) || Boolean(node.dueAt) || Boolean(node.note);
@@ -25371,19 +25390,28 @@ function nodeLayoutSize(node, dens, opts) {
   const preset = node.stylePreset ?? "default";
   const asCard = Boolean(opts?.asCard) || preset === "card";
   if (asCard) {
-    const w2 = dens.nodeW >= 200 ? 288 : 248;
+    const cardW = dens.nodeW >= 200 ? 288 : 248;
     const gap = 10;
+    const headerH = 40;
+    const padY = 12;
     let body = 0;
-    if (node.note) body += 32 + gap;
-    if (node.imageUrl) body += 68 + gap;
-    if (node.tags?.length) body += 32 + gap;
-    if (node.links?.length) body += 32 + gap;
-    if (node.startAt != null) body += 32 + gap;
-    if (node.dueAt != null) body += 32 + gap;
-    if (node.pinned) body += 32 + gap;
+    if (node.imageUrl) body += (dens.nodeW >= 200 ? 108 : 90) + gap;
+    if (node.note) body += (dens.nodeW >= 200 ? 48 : 40) + gap;
+    const descCount = node.description ? Math.min(
+      6,
+      Object.values(node.description).filter(
+        (v) => v != null && String(v).trim() !== ""
+      ).length
+    ) : 0;
+    if (descCount) body += descCount * 18 + Math.max(0, descCount - 1) * 4 + gap;
+    const hasFooter = Boolean(node.tags?.length) || Boolean(node.links?.length) || node.startAt != null || node.dueAt != null || Boolean(node.pinned);
+    if (hasFooter) body += 24 + gap;
     if (body > 0) body -= gap;
-    const h2 = 36 + 24 + Math.max(body, 12);
-    return { w: w2, h: Math.max(h2, dens.nodeW >= 200 ? 100 : 84) };
+    const cardH = headerH + padY * 2 + Math.max(body, 8);
+    return {
+      w: cardW,
+      h: Math.max(cardH, dens.nodeW >= 200 ? 104 : 88)
+    };
   }
   if (preset === "title") {
     w *= 1.2;
@@ -25493,7 +25521,7 @@ function assignSides(focusId, nodesById, children) {
   }
   return sideOf;
 }
-function buildSubtree(id, nodesById, children, dens, path3, asCard, childFilter) {
+function buildSubtree(id, nodesById, children, dens, path3, sizeOpts, childFilter) {
   if (path3.has(id)) return null;
   const node = nodesById.get(id);
   if (!node || node.deletedAt) return null;
@@ -25509,12 +25537,12 @@ function buildSubtree(id, nodesById, children, dens, path3, asCard, childFilter)
         children,
         dens,
         nextPath,
-        asCard
+        sizeOpts
       );
       if (child) kids.push(child);
     }
   }
-  const box = nodeLayoutSize(node, dens, { asCard });
+  const box = nodeLayoutSize(node, dens, sizeOpts);
   return {
     id,
     // flextree size = full box + gutters (claim real space, not a rigid grid cell)
@@ -25604,6 +25632,7 @@ function hierarchyFingerprint(edges) {
 function layout(input) {
   const dens = DENSITY[input.density ?? "comfortable"];
   const asCard = input.nodeViewMode === "card";
+  const asTopology = input.nodeViewMode === "topology";
   const nodesById = new Map(input.nodes.map((n) => [n.id, n]));
   if (!nodesById.has(input.focusNodeId)) return {};
   const hidden = nodesHiddenByCollapse(input.nodes, input.edges);
@@ -25611,7 +25640,7 @@ function layout(input) {
   const sizes = /* @__PURE__ */ new Map();
   for (const n of input.nodes) {
     if (n.deletedAt || hidden.has(n.id)) continue;
-    sizes.set(n.id, nodeLayoutSize(n, dens, { asCard }));
+    sizes.set(n.id, nodeLayoutSize(n, dens, { asCard, asTopology }));
   }
   const prev = input.prevPositions;
   const fp = hierarchyFingerprint(input.edges);
@@ -25682,7 +25711,7 @@ function layout(input) {
       children,
       dens,
       /* @__PURE__ */ new Set(),
-      asCard,
+      { asCard, asTopology },
       (childId) => sideOf.get(childId) === side
     );
     if (!tree?.children?.length) continue;
@@ -25741,7 +25770,7 @@ function layout(input) {
   return positions;
 }
 
-// apps/server/src/tools.ts
+// ../../apps/server/src/tools.ts
 var activityByCanvas = /* @__PURE__ */ new Map();
 function prepareOps(store, canvasId, rawOps) {
   if (!Array.isArray(rawOps)) {
@@ -26031,8 +26060,8 @@ function finalizeAutoFit(store, canvasId, padding = 50) {
   return viewport;
 }
 function estimateOverlaps(nodes, positions, nodeViewMode, anchorId) {
-  const w = nodeViewMode === "card" ? 180 : 120;
-  const h = nodeViewMode === "card" ? 72 : 36;
+  const w = nodeViewMode === "card" ? 180 : nodeViewMode === "topology" ? 88 : 120;
+  const h = nodeViewMode === "card" ? 72 : nodeViewMode === "topology" ? 64 : 36;
   const ids = nodes.filter((n) => !n.deletedAt && n.id !== anchorId && positions[n.id]).map((n) => n.id);
   const pairs = [];
   for (let i = 0; i < ids.length; i++) {
@@ -26228,11 +26257,24 @@ async function runTool(name17, rawArgs, ctx) {
     case "mindmap_create_canvas": {
       const title = String(rawArgs.title || "\u672A\u547D\u540D\u753B\u5E03");
       const rootText = rawArgs.rootText != null && String(rawArgs.rootText).trim() ? String(rawArgs.rootText) : void 0;
-      const g = ctx.store.createCanvas(title, rootText);
+      const prefsArg = rawArgs.prefs && typeof rawArgs.prefs === "object" ? rawArgs.prefs : void 0;
+      const viewParsed = NodeViewModeSchema.safeParse(
+        rawArgs.nodeViewMode ?? prefsArg?.nodeViewMode
+      );
+      const g = ctx.store.createCanvas(
+        title,
+        rootText,
+        viewParsed.success ? { nodeViewMode: viewParsed.data } : void 0
+      );
       return {
         ok: true,
-        canvas: { id: g.canvas.id, title: g.canvas.title, rev: g.canvas.rev },
-        hint: "Canvas is empty visually. Create top-level nodes with {type:'create_node', text:'...'} (omit parentId). Use parentId only when nesting under an existing visible node."
+        canvas: {
+          id: g.canvas.id,
+          title: g.canvas.title,
+          rev: g.canvas.rev,
+          prefs: { nodeViewMode: g.canvas.prefs.nodeViewMode }
+        },
+        hint: g.canvas.prefs.nodeViewMode === "topology" ? "Topology canvas: create NE nodes with icon:'router'. Omit parentId for top-level. Prefer straight hierarchy/relation links." : "Canvas is empty visually. Create top-level nodes with {type:'create_node', text:'...'} (omit parentId). Use parentId only when nesting under an existing visible node."
       };
     }
     case "mindmap_open_canvas": {
@@ -26509,21 +26551,34 @@ async function runTool(name17, rawArgs, ctx) {
           snap.canvas.title,
           anchorId
         );
+        if (format === "png") {
+          return {
+            ok: true,
+            format: "svg",
+            requestedFormat: "png",
+            title: snap.canvas.title,
+            mimeType: "image/svg+xml",
+            svg,
+            nodeCount: publicNodes.length,
+            edgeCount: publicEdges.length,
+            hint: "PNG raster needs the web UI toolbar button (system fonts). This tool returns SVG which pastes into docs/PPT; save as .svg or convert locally."
+          };
+        }
         return {
           ok: true,
-          format: format === "png" ? "svg" : "svg",
+          format: "svg",
           title: snap.canvas.title,
           mimeType: "image/svg+xml",
           svg,
           nodeCount: publicNodes.length,
           edgeCount: publicEdges.length,
-          hint: format === "png" ? "Agent export returns SVG (vector). For raster PNG use the web UI\u300C\u5BFC\u51FAPNG\u300D; SVG pastes into docs/PPT as well." : "SVG can be saved as .svg or opened in browser / Office."
+          hint: "SVG can be saved as .svg or opened in browser / Office."
         };
       }
       return {
         ok: false,
         error: "invalid_op",
-        message: 'format must be "json" | "md" | "svg" (png \u2192 svg for agents; UI has raster PNG)'
+        message: 'format must be "json" | "md" | "svg" | "png"'
       };
     }
     case "mindmap_get_node": {
@@ -26836,20 +26891,11 @@ async function runTool(name17, rawArgs, ctx) {
           "edge_note",
           "all"
         ],
-        nodeIcons: [
-          "server",
-          "database",
-          "cloud",
-          "person",
-          "folder",
-          "doc",
-          "link",
-          "warning",
-          "check",
-          "star",
-          "gear",
-          "globe"
-        ],
+        nodeIcons: NodeIconSchema.options,
+        nodeViewModes: NodeViewModeSchema.options,
+        createCanvas: {
+          nodeViewMode: "Optional on mindmap_create_canvas (canvas-global). Also changeable later via set_prefs."
+        },
         edgeLineStyles: ["solid", "dashed", "dotted"],
         edgeDirections: ["forward", "both", "none"],
         getSubgraph: {
@@ -27305,7 +27351,7 @@ async function runTool(name17, rawArgs, ctx) {
   }
 }
 
-// apps/server/src/chat.ts
+// ../../apps/server/src/chat.ts
 function llmConfigured() {
   return Boolean(process.env.LLM_API_KEY || process.env.OPENAI_API_KEY);
 }
@@ -27346,9 +27392,10 @@ function createChatHandler(ctx) {
 8. \u56FA\u5B9A\u5750\u6807\u7528 set_pinned \u6216 create_node \u5E26 pos\uFF1B\u4E0D\u786E\u5B9A\u65F6 mindmap_get_schema\u3002
 9. \u8282\u70B9\u5C5E\u6027\uFF1A\u6807\u9898\u7528 update_text\uFF1B\u63CF\u8FF0/\u591A\u6807\u7B7E/\u591A\u94FE\u63A5/\u56FE\u7247URL/\u65F6\u95F4\u7528 update_node_meta\uFF08patch\uFF09\uFF1B\u8FB9\u7528 update_edge_meta \u6216 set_edge_label\u3002
 10. \u8282\u70B9\u7C7B\u578B stylePreset\uFF1Adefault|card|title|decision|risk|note|muted\uFF08title \u4EC5\u753B\u5E03\u951A\u70B9\uFF0C\u52FF\u65B0\u5EFA\uFF1Bcard=\u65B0\u95FB\u5FEB\u7167\u5361\u7247\uFF0C\u914D\u56FE\u7528 imageUrl\u3001\u6458\u8981\u7528 note\u3001\u6765\u6E90\u7528 links\uFF09\u3002
-11. \u540C\u7EA7\u6392\u5E8F\u7528 reorder\uFF1A\u4F18\u5148 {"type":"reorder","nodeId":"...","order":10}\uFF1B\u4E5F\u53EF\u7528 afterSiblingId\uFF08null=\u7F6E\u9876\uFF09\u3002
-12. \u6298\u53E0 set_collapsed \u4F1A\u9690\u85CF\u8BE5\u8282\u70B9\u4E3B\u7236\u94FE\u4E0B\u7684\u5168\u90E8\u5B50\u5B59\u5E76\u91CD\u65B0\u5E03\u5C40\uFF1B\u5C55\u5F00\u540E\u6062\u590D\u3002
-13. \u95EE\u56FE\uFF1A\u7528 mindmap_query\uFF08neighbors|path|stats|orphans|missing_meta\uFF09\uFF1B\u7B54\u5B8C\u53EF\u7528 mindmap_highlight \u9AD8\u4EAE\u8DEF\u5F84\uFF1B\u7EC6\u8282\u7528 mindmap_get_node / mindmap_get_edge\u3002\u7981\u6B62\u7F16\u9020\u56FE\u4E2D\u6CA1\u6709\u7684\u4E8B\u5B9E\u3002
+11. \u8282\u70B9\u56FE\u6807 icon\uFF08create_node / update_node_meta.patch\uFF09\uFF1Aserver|database|cloud|person|folder|doc|link|warning|check|star|gear|globe|router\u3002\u62D3\u6251\u6392\u969C\u56FE\uFF1A\u5EFA\u753B\u5E03\u65F6\u53EF\u7528 mindmap_create_canvas({ title, nodeViewMode:"topology" })\uFF0C\u8282\u70B9 icon:"router"\uFF1BnodeViewMode \u662F\u753B\u5E03\u5168\u5C40\u504F\u597D\uFF0C\u4E5F\u53EF\u4E8B\u540E set_prefs \u4FEE\u6539\u3002
+12. \u540C\u7EA7\u6392\u5E8F\u7528 reorder\uFF1A\u4F18\u5148 {"type":"reorder","nodeId":"...","order":10}\uFF1B\u4E5F\u53EF\u7528 afterSiblingId\uFF08null=\u7F6E\u9876\uFF09\u3002
+13. \u6298\u53E0 set_collapsed \u4F1A\u9690\u85CF\u8BE5\u8282\u70B9\u4E3B\u7236\u94FE\u4E0B\u7684\u5168\u90E8\u5B50\u5B59\u5E76\u91CD\u65B0\u5E03\u5C40\uFF1B\u5C55\u5F00\u540E\u6062\u590D\u3002
+14. \u95EE\u56FE\uFF1A\u7528 mindmap_query\uFF08neighbors|path|stats|orphans|missing_meta\uFF09\uFF1B\u7B54\u5B8C\u53EF\u7528 mindmap_highlight \u9AD8\u4EAE\u8DEF\u5F84\uFF1B\u7EC6\u8282\u7528 mindmap_get_node / mindmap_get_edge\u3002\u7981\u6B62\u7F16\u9020\u56FE\u4E2D\u6CA1\u6709\u7684\u4E8B\u5B9E\u3002
 
 \u5F53\u524D\u7A7A\u95F4\u4E0A\u4E0B\u6587\uFF08\u6458\u8981\uFF09\uFF1A
 ${JSON.stringify(spatial, null, 0).slice(0, 6e3)}
@@ -27474,7 +27521,7 @@ ${JSON.stringify(spatial, null, 0).slice(0, 6e3)}
   };
 }
 
-// apps/server/src/create-server.ts
+// ../../apps/server/src/create-server.ts
 function bridgeBase() {
   return (process.env.MINDMAP_DSH_BRIDGE || "").replace(/\/$/, "");
 }
@@ -27564,7 +27611,13 @@ function startMindMapServer(options = {}) {
   );
   app.post("/api/canvases", async (c) => {
     const body = await c.req.json().catch(() => ({}));
-    const g = store.createCanvas(body.title, body.rootText);
+    const viewRaw = body.nodeViewMode ?? body.prefs?.nodeViewMode;
+    const parsed = NodeViewModeSchema.safeParse(viewRaw);
+    const g = store.createCanvas(
+      body.title,
+      body.rootText,
+      parsed.success ? { nodeViewMode: parsed.data } : void 0
+    );
     broadcast({ type: "canvas/created", canvasId: g.canvas.id });
     return c.json(clientCanvasPayload(store, g.canvas.id));
   });
@@ -27739,6 +27792,28 @@ function startMindMapServer(options = {}) {
     try {
       const snap = store.getSnapshot(c.req.param("id"));
       return c.json(snap);
+    } catch {
+      return c.json({ ok: false, error: "not_found" }, 404);
+    }
+  });
+  app.get("/api/canvases/:id/export.svg", async (c) => {
+    try {
+      const id = c.req.param("id");
+      const result = await runTool(
+        "mindmap_export",
+        { format: "svg", canvasId: id },
+        { store, broadcast, defaultCanvasId: id }
+      );
+      if (!result?.ok || typeof result.svg !== "string") {
+        return c.json({ ok: false, error: "export_failed" }, 400);
+      }
+      const safe = String(result.title ?? "mindmap").replace(/[\\/:*?"<>|]+/g, "_") || "mindmap";
+      return new Response(result.svg, {
+        headers: {
+          "Content-Type": "image/svg+xml; charset=utf-8",
+          "Content-Disposition": `attachment; filename="${safe}.svg"`
+        }
+      });
     } catch {
       return c.json({ ok: false, error: "not_found" }, 404);
     }
@@ -27981,7 +28056,6 @@ function startMindMapServer(options = {}) {
     }
   });
   const webDistAbs = resolveWebDist(root);
-  const webDistRel = path2.relative(process.cwd(), webDistAbs) || ".";
   if (fs2.existsSync(path2.join(webDistAbs, "index.html"))) {
     app.use(
       "/*",
@@ -28063,5 +28137,5 @@ function startMindMapServer(options = {}) {
   };
 }
 
-// apps/server/src/index.ts
+// ../../apps/server/src/index.ts
 startMindMapServer();

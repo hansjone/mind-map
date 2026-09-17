@@ -265,7 +265,7 @@ export function mindmapToolDefinitions(getBase, getCanvasIdForSession, setActive
     {
       name: 'mindmap_export',
       description:
-        'Export canvas as json | md | svg. format=png also returns SVG (vector) for agents; use web UI for raster PNG.',
+        'Export canvas as json | md | svg | png. format=png returns SVG for agents (no server fonts); use the canvas toolbar PNG button for raster PNG.',
       parameters: {
         type: 'object',
         additionalProperties: false,
@@ -674,7 +674,7 @@ Other tools:
 - mindmap_query — graph Q&A: neighbors|path|stats|orphans|missing_meta (deterministic; cite returned nodes)
 - mindmap_get_node / mindmap_get_edge — details for follow-up
 - mindmap_highlight — flash path (nodeIds + edgeIds + optional ttlMs/style)
-- mindmap_export — format json|md|svg (png→svg for agents; UI has raster PNG)
+- mindmap_export — format json|md|svg|png (png→svg for agents; toolbar PNG is raster)
 - mindmap_focus, mindmap_undo, mindmap_redo, mindmap_history
 - mindmap_snapshot / mindmap_restore_snapshot — named checkpoints
 - mindmap_apply_direct({ preview:true }) — dry-run layout + overlaps, no persist

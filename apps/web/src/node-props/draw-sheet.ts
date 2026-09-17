@@ -3,9 +3,10 @@ import { canvasFont, paintBadgeChip } from "../canvas-chrome";
 import { getCachedImage, imageLoadFailed } from "../image-cache";
 import type { SystemTheme } from "../system-theme";
 import { roundRectPath, wrapTextLines } from "../node-geometry";
-import { descriptionChips } from "./description-display";
+import { descriptionChips, type DescChip } from "./description-display";
 import {
   CARD_CHIP_H,
+  CARD_FOOTER_H,
   CARD_GAP,
   CARD_HEADER_H,
   CARD_HERO_H,
@@ -31,6 +32,178 @@ function formatDate(ms?: number): string | null {
   }
 }
 
+export type CardChipHit = {
+  key: string;
+  label: string;
+  value: string;
+  fullValue: string;
+  /** Card-local rect (relative to card top-left). */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+export type DrawPropSheetOpts = {
+  expanded?: boolean;
+};
+
+/** Compute chip hit targets in card-local coordinates (must match drawPropSheet). */
+export function cardChipHits(
+  node: MindNode,
+  dens: boolean,
+  expanded = false,
+): CardChipHit[] {
+  const { w } = estimateCardSize(node, dens, new Set(), { expanded });
+  let cy = CARD_HEADER_H + Math.max(4, CARD_PAD_Y - 4);
+  const contentW = w - CARD_PAD_X * 2;
+
+  if (node.imageUrl?.trim()) {
+    cy += (dens ? CARD_HERO_H.compact : CARD_HERO_H.comfortable) + CARD_GAP;
+  }
+
+  const note = node.note?.trim();
+  if (note) {
+    const maxLines = expanded ? (dens ? 10 : 12) : dens ? 2 : 3;
+    // Approximate line count without canvas measure (hit test is generous)
+    const approxChars = dens ? 28 : 34;
+    const lines = Math.min(
+      maxLines,
+      Math.max(1, Math.ceil(note.length / approxChars)),
+    );
+    const lh = dens ? 15 : 16;
+    cy += lines * lh + CARD_GAP;
+  }
+
+  const chips = descriptionChips(node.description, {
+    full: expanded,
+    max: expanded ? 64 : 6,
+  });
+  const hits: CardChipHit[] = [];
+  const rowGap = dens ? 4 : 5;
+  for (const chip of chips) {
+    const approx = dens ? 18 : 22;
+    const vLines = expanded
+      ? Math.min(8, Math.max(1, Math.ceil(chip.fullValue.length / approx)))
+      : 1;
+    const lh = dens ? 14 : 15;
+    const rowH = CARD_CHIP_H + Math.max(0, vLines - 1) * lh;
+    hits.push({
+      key: chip.key,
+      label: chip.label,
+      value: chip.value,
+      fullValue: chip.fullValue,
+      x: CARD_PAD_X,
+      y: cy,
+      w: contentW,
+      h: rowH,
+    });
+    cy += rowH + rowGap;
+  }
+  return hits;
+}
+
+/** Also expose note / title as hoverable regions when truncated. */
+export function cardFieldHits(
+  node: MindNode,
+  dens: boolean,
+  expanded = false,
+): CardChipHit[] {
+  const { w } = estimateCardSize(node, dens, new Set(), { expanded });
+  const hits: CardChipHit[] = [];
+  const title = (node.text || "未命名").trim();
+  hits.push({
+    key: "__title",
+    label: "标题",
+    value: title,
+    fullValue: title,
+    x: 28,
+    y: 4,
+    w: w - 32 - CARD_PAD_X,
+    h: CARD_HEADER_H - 8,
+  });
+
+  let cy = CARD_HEADER_H + Math.max(4, CARD_PAD_Y - 4);
+  const contentW = w - CARD_PAD_X * 2;
+
+  if (node.imageUrl?.trim()) {
+    cy += (dens ? CARD_HERO_H.compact : CARD_HERO_H.comfortable) + CARD_GAP;
+  }
+
+  const note = node.note?.trim();
+  if (note) {
+    const maxLines = expanded ? (dens ? 10 : 12) : dens ? 2 : 3;
+    const approxChars = dens ? 28 : 34;
+    const lines = Math.min(
+      maxLines,
+      Math.max(1, Math.ceil(note.length / approxChars)),
+    );
+    const lh = dens ? 15 : 16;
+    const noteH = lines * lh;
+    hits.push({
+      key: "__note",
+      label: "摘要",
+      value: note,
+      fullValue: note,
+      x: CARD_PAD_X,
+      y: cy,
+      w: contentW,
+      h: noteH,
+    });
+  }
+
+  return [...hits, ...cardChipHits(node, dens, expanded)];
+}
+
+function drawChipRows(
+  ctx: CanvasRenderingContext2D,
+  chips: DescChip[],
+  x: number,
+  startY: number,
+  contentW: number,
+  theme: SystemTheme,
+  dens: boolean,
+  expanded: boolean,
+): number {
+  let cy = startY;
+  const rowGap = dens ? 4 : 5;
+  for (let i = 0; i < chips.length; i++) {
+    const chip = chips[i]!;
+    ctx.fillStyle = theme.labelSecondary;
+    ctx.font = canvasFont(10, 500);
+    ctx.textBaseline = "middle";
+    const label = chip.label;
+    const labelW = Math.min(ctx.measureText(label).width, contentW * 0.36);
+    const text = expanded ? chip.fullValue : chip.value;
+    const vx = x + CARD_PAD_X + labelW + 10;
+    const vw = contentW - labelW - 10;
+    const maxLines = expanded ? 8 : 1;
+    ctx.font = canvasFont(dens ? 11 : 12, 500);
+    const vLines = wrapTextLines(ctx, text, vw, maxLines);
+    const lh = dens ? 14 : 15;
+    const rowH = Math.max(CARD_CHIP_H, vLines.length * lh);
+
+    ctx.fillStyle = theme.labelSecondary;
+    ctx.font = canvasFont(10, 500);
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, x + CARD_PAD_X, cy + CARD_CHIP_H / 2, labelW);
+
+    ctx.fillStyle = theme.labelPrimary;
+    ctx.font = canvasFont(dens ? 11 : 12, 500);
+    if (vLines.length <= 1) {
+      ctx.textBaseline = "middle";
+      ctx.fillText(vLines[0] ?? text, vx, cy + CARD_CHIP_H / 2);
+    } else {
+      ctx.textBaseline = "top";
+      for (let li = 0; li < vLines.length; li++) {
+        ctx.fillText(vLines[li]!, vx, cy + 2 + li * lh);
+      }
+    }
+    cy += rowH + rowGap;
+  }
+  return cy;
+}
+
 /** Glass card body: title → hero → note → meta chips → footer (no raw JSON). */
 export function drawPropSheet(
   ctx: CanvasRenderingContext2D,
@@ -42,8 +215,10 @@ export function drawPropSheet(
   dens: boolean,
   accent: string,
   onImage: () => void,
+  opts: DrawPropSheetOpts = {},
 ) {
-  const { w, h } = estimateCardSize(node, dens);
+  const expanded = Boolean(opts.expanded);
+  const { w, h } = estimateCardSize(node, dens, new Set(), { expanded });
   const radius = dens ? 14 : 16;
 
   ctx.save();
@@ -91,13 +266,13 @@ export function drawPropSheet(
     ctx,
     node.text || "未命名",
     titleMaxW,
-    dens ? 1 : 2,
+    expanded ? (dens ? 2 : 3) : dens ? 1 : 2,
   );
   if (titleLines.length === 1) {
     ctx.fillText(titleLines[0]!, x + 28, y + CARD_HEADER_H / 2);
   } else {
     const lh = 14;
-    const ty = y + CARD_HEADER_H / 2 - lh / 2;
+    const ty = y + CARD_HEADER_H / 2 - ((titleLines.length - 1) * lh) / 2;
     titleLines.forEach((line, i) => {
       ctx.fillText(line, x + 28, ty + i * lh);
     });
@@ -118,7 +293,6 @@ export function drawPropSheet(
     ctx.fillStyle = theme.glassHeader;
     ctx.fillRect(x + CARD_PAD_X, cy, contentW, ih);
     if (img && img.naturalWidth > 0) {
-      // Cover: fill frame, crop edges lightly for magazine feel
       const scale = Math.max(
         contentW / img.naturalWidth,
         ih / img.naturalHeight,
@@ -152,7 +326,8 @@ export function drawPropSheet(
     ctx.fillStyle = theme.labelSecondary;
     ctx.font = canvasFont(dens ? 11.5 : 12.5, 400);
     ctx.textBaseline = "top";
-    const lines = wrapTextLines(ctx, note, contentW, dens ? 2 : 3);
+    const maxLines = expanded ? (dens ? 10 : 12) : dens ? 2 : 3;
+    const lines = wrapTextLines(ctx, note, contentW, maxLines);
     const lh = dens ? 15 : 16;
     for (let i = 0; i < lines.length; i++) {
       ctx.fillText(lines[i]!, x + CARD_PAD_X, cy + i * lh);
@@ -160,34 +335,20 @@ export function drawPropSheet(
     cy += lines.length * lh + CARD_GAP;
   }
 
-  // Description as one compact key-value block (no row dividers)
-  const chips = descriptionChips(node.description);
+  // Description as key-value rows
+  const chips = descriptionChips(node.description, {
+    full: expanded,
+    max: expanded ? 64 : 6,
+  });
   if (chips.length) {
-    const rowGap = dens ? 4 : 5;
-    for (let i = 0; i < chips.length; i++) {
-      const chip = chips[i]!;
-      ctx.fillStyle = theme.labelSecondary;
-      ctx.font = canvasFont(10, 500);
-      ctx.textBaseline = "middle";
-      const label = chip.label;
-      const labelW = Math.min(ctx.measureText(label).width, contentW * 0.36);
-      ctx.fillText(label, x + CARD_PAD_X, cy + CARD_CHIP_H / 2, labelW);
-
-      ctx.fillStyle = theme.labelPrimary;
-      ctx.font = canvasFont(dens ? 11 : 12, 500);
-      const vx = x + CARD_PAD_X + labelW + 10;
-      const vw = contentW - labelW - 10;
-      const vLines = wrapTextLines(ctx, chip.value, vw, 1);
-      ctx.fillText(vLines[0] ?? chip.value, vx, cy + CARD_CHIP_H / 2);
-      cy += CARD_CHIP_H + rowGap;
-    }
+    cy = drawChipRows(ctx, chips, x, cy, contentW, theme, dens, expanded);
     cy += CARD_GAP - 4;
   }
 
   // Footer: tags / source / dates as chips
   const footerBits: string[] = [];
   if (node.tags?.length) {
-    for (const t of node.tags.slice(0, 3)) footerBits.push(`#${t}`);
+    for (const t of node.tags.slice(0, expanded ? 12 : 3)) footerBits.push(`#${t}`);
   }
   if (node.links?.[0]) {
     const l = node.links[0];
@@ -205,7 +366,11 @@ export function drawPropSheet(
     for (const bit of footerBits) {
       const used = paintBadgeChip(ctx, bit, fx, fy, theme, zoom);
       fx += used;
-      if (fx > x + w - CARD_PAD_X - 24) break;
+      if (!expanded && fx > x + w - CARD_PAD_X - 24) break;
+      if (expanded && fx > x + w - CARD_PAD_X - 24) {
+        fx = x + CARD_PAD_X;
+        cy += CARD_FOOTER_H;
+      }
     }
   }
 

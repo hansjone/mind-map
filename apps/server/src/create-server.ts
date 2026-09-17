@@ -390,6 +390,35 @@ export function startMindMapServer(
     }
   });
 
+  app.get("/api/canvases/:id/export.svg", async (c) => {
+    try {
+      const id = c.req.param("id");
+      const result = (await runTool(
+        "mindmap_export",
+        { format: "svg", canvasId: id },
+        { store, broadcast, defaultCanvasId: id },
+      )) as {
+        ok?: boolean;
+        svg?: string;
+        title?: string;
+      };
+      if (!result?.ok || typeof result.svg !== "string") {
+        return c.json({ ok: false, error: "export_failed" }, 400);
+      }
+      const safe =
+        String(result.title ?? "mindmap").replace(/[\\/:*?"<>|]+/g, "_") ||
+        "mindmap";
+      return new Response(result.svg, {
+        headers: {
+          "Content-Type": "image/svg+xml; charset=utf-8",
+          "Content-Disposition": `attachment; filename="${safe}.svg"`,
+        },
+      });
+    } catch {
+      return c.json({ ok: false, error: "not_found" }, 404);
+    }
+  });
+
   app.post("/api/tools/:name", async (c) => {
     const name = c.req.param("name");
     const args = (await c.req.json().catch(() => ({}))) as Record<string, unknown>;
