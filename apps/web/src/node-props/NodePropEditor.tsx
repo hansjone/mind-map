@@ -24,6 +24,15 @@ type ApplyOps = (ops: Op[], summary?: string) => void | Promise<void>;
 
 type KvRow = { id: string; key: string; value: string };
 
+const OVERLAY_EDITOR_W = 440;
+
+function autoResizeTextarea(el: HTMLTextAreaElement | null) {
+  if (!el) return;
+  el.style.height = "auto";
+  const next = Math.min(320, Math.max(el.scrollHeight, 96));
+  el.style.height = `${next}px`;
+}
+
 function rowsFromDescription(
   description: Record<string, unknown> | null | undefined,
 ): KvRow[] {
@@ -160,6 +169,12 @@ export function NodePropEditor({
           ? ({ "--ns-brand": accent } as CSSProperties)
           : undefined
       }
+      onPointerDown={(e) => {
+        if (variant === "overlay") e.stopPropagation();
+      }}
+      onWheel={(e) => {
+        if (variant === "overlay") e.stopPropagation();
+      }}
     >
       <div
         className="ns-editor__header"
@@ -394,18 +409,24 @@ function DescriptionListEditor({
               }}
               onBlur={() => onCommit(descriptionFromRows(rowsRef.current))}
             />
-            <input
+            <textarea
               className="ns-kv__val"
               value={row.value}
               placeholder="内容"
               aria-label="属性值"
+              rows={Math.min(10, Math.max(3, Math.ceil(row.value.length / 36)))}
               onChange={(e) => {
                 const value = e.target.value;
                 setRows((prev) =>
                   prev.map((r) => (r.id === row.id ? { ...r, value } : r)),
                 );
+                autoResizeTextarea(e.target);
               }}
+              onFocus={(e) => autoResizeTextarea(e.target)}
               onBlur={() => onCommit(descriptionFromRows(rowsRef.current))}
+              ref={(el) => {
+                if (el) autoResizeTextarea(el);
+              }}
             />
             <button
               type="button"
@@ -525,10 +546,22 @@ function FieldRow({
         {def.kind === "textarea" || def.kind === "links" ? (
           <textarea
             key={`${def.id}-${node.id}-${node.version}`}
+            className={
+              def.id === "note" || seed.length > 80 ? "ns-textarea--lg" : undefined
+            }
             defaultValue={seed}
-            rows={def.kind === "links" ? 3 : 2}
+            rows={
+              def.kind === "links"
+                ? Math.min(8, Math.max(3, seed.split("\n").length + 1))
+                : Math.min(12, Math.max(5, Math.ceil(seed.length / 40)))
+            }
             placeholder={def.kind === "links" ? "标题|url 每行一条" : ""}
+            onFocus={(e) => autoResizeTextarea(e.target)}
+            onInput={(e) => autoResizeTextarea(e.currentTarget)}
             onBlur={(e) => onCommit(e.target.value)}
+            ref={(el) => {
+              if (el) autoResizeTextarea(el);
+            }}
           />
         ) : def.kind === "datetime" ? (
           <input
@@ -575,9 +608,9 @@ export function NodePropOverlay({
   applyOps,
   screenX,
   screenY,
-  zoom,
+  zoom: _zoom,
   accent,
-  width,
+  width: _width,
   showStylePreset,
 }: {
   node: MindNode;
@@ -589,14 +622,16 @@ export function NodePropOverlay({
   width: number;
   showStylePreset?: boolean;
 }) {
+  // Keep editor at screen size (ignore canvas zoom / card width) so long text is editable.
+  const panelW = OVERLAY_EDITOR_W;
   return (
     <div
-      className="ns-overlay"
+      className="ns-overlay ns-overlay--roomy"
       style={{
         left: screenX,
         top: screenY,
-        width,
-        transform: `translate(-50%, -50%) scale(${zoom})`,
+        width: panelW,
+        transform: "translate(-50%, -50%)",
       }}
     >
       <NodePropEditor

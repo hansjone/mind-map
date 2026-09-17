@@ -144,7 +144,12 @@ export function TopologyCanvas() {
     value: string;
     x: number;
     y: number;
+    pinned: boolean;
+    nodeId: string;
+    fieldKey: string;
   } | null>(null);
+  const propTipRef = useRef(propTip);
+  propTipRef.current = propTip;
   const [linkPreview, setLinkPreview] = useState<{
     fromId: string;
     x: number;
@@ -283,7 +288,60 @@ export function TopologyCanvas() {
       }
       return null;
     },
-    [nodes, posOf, dens],
+    [nodes, posOf, boxOf],
+  );
+
+  /** Resolve card property under pointer (hover tip / pin for讲解). */
+  const hitCardField = useCallback(
+    (
+      clientX: number,
+      clientY: number,
+      world: { x: number; y: number },
+    ): {
+      nodeId: string;
+      field: CardChipHit;
+      tipX: number;
+      tipY: number;
+    } | null => {
+      if (!cardView || viewport.zoom < 0.35) return null;
+      const hit = hitTest(world.x, world.y);
+      if (!hit || propEditId === hit) return null;
+      const n = nodes.find((x) => x.id === hit);
+      const p = n ? posOf(hit) : null;
+      if (!n || !p) return null;
+      const { w: bw, h: bh } = boxOf(n);
+      const localX = world.x - (p.x - bw / 2);
+      const localY = world.y - (p.y - bh / 2);
+      const fields = cardFieldHits(n, dens, expandedCardId === n.id);
+      const field = fields.find(
+        (f) =>
+          localX >= f.x &&
+          localX <= f.x + f.w &&
+          localY >= f.y &&
+          localY <= f.y + f.h,
+      );
+      if (!field) return null;
+      const host = hostRef.current?.getBoundingClientRect();
+      const tipX = host
+        ? clientX - host.left + 14
+        : hostSize.w / 2 + viewport.x + world.x * viewport.zoom + 14;
+      const tipY = host
+        ? clientY - host.top + 14
+        : hostSize.h / 2 + viewport.y + world.y * viewport.zoom + 14;
+      return { nodeId: hit, field, tipX, tipY };
+    },
+    [
+      cardView,
+      viewport,
+      hitTest,
+      propEditId,
+      nodes,
+      posOf,
+      boxOf,
+      dens,
+      expandedCardId,
+      hostSize,
+    ],
   );
 
   const worldBounds = useMemo(() => {
@@ -1246,49 +1304,22 @@ export function TopologyCanvas() {
           }
         }
 
-        // Idle hover: property tip in card view, node hover otherwise
+        // Idle hover: property tip in card view (skip while a tip is pinned)
         if (dragRef.current.mode === "none" && !ghost) {
           const hit = hitTest(world.x, world.y);
           setHoverId(hit);
-          if (cardView && hit && viewport.zoom >= 0.35 && propEditId !== hit) {
-            const n = nodes.find((x) => x.id === hit);
-            const p = n ? posOf(hit) : null;
-            if (n && p) {
-              const { w: bw, h: bh } = boxOf(n);
-              const localX = world.x - (p.x - bw / 2);
-              const localY = world.y - (p.y - bh / 2);
-              const fields = cardFieldHits(
-                n,
-                dens,
-                expandedCardId === n.id,
-              );
-              const field = fields.find(
-                (f: CardChipHit) =>
-                  localX >= f.x &&
-                  localX <= f.x + f.w &&
-                  localY >= f.y &&
-                  localY <= f.y + f.h,
-              );
-              if (field) {
-                const host = hostRef.current?.getBoundingClientRect();
-                const tipX = host
-                  ? e.clientX - host.left + 14
-                  : hostSize.w / 2 + viewport.x + world.x * viewport.zoom + 14;
-                const tipY = host
-                  ? e.clientY - host.top + 14
-                  : hostSize.h / 2 + viewport.y + world.y * viewport.zoom + 14;
-                setPropTip({
-                  label: field.label,
-                  value: field.fullValue,
-                  x: tipX,
-                  y: tipY,
-                });
-              } else {
-                setPropTip(null);
-              }
-            } else {
-              setPropTip(null);
-            }
+          if (propTipRef.current?.pinned) return;
+          const found = hitCardField(e.clientX, e.clientY, world);
+          if (found) {
+            setPropTip({
+              label: found.field.label,
+              value: found.field.fullValue,
+              x: found.tipX,
+              y: found.tipY,
+              pinned: false,
+              nodeId: found.nodeId,
+              fieldKey: found.field.key,
+            });
           } else {
             setPropTip(null);
           }
@@ -1373,13 +1404,30 @@ export function TopologyCanvas() {
         } else if (mode === "node" && fromId && !moved) {
           setSelection([fromId]);
           if (cardView) {
-            setExpandedCardId((prev) => (prev === fromId ? null : fromId));
-            if (propEditId && propEditId !== fromId) setPropEditId(null);
+            const found = hitCardField(e.clientX, e.clientY, world);
+            if (found) {
+              // Click property → pin tip for present /讲解
+              setExpandedCardId(fromId);
+              if (propEditId && propEditId !== fromId) setPropEditId(null);
+              setPropTip({
+                label: found.field.label,
+                value: found.field.fullValue,
+                x: found.tipX,
+                y: found.tipY,
+                pinned: true,
+                nodeId: found.nodeId,
+                fieldKey: found.field.key,
+              });
+            } else {
+              setExpandedCardId((prev) => (prev === fromId ? null : fromId));
+              if (propEditId && propEditId !== fromId) setPropEditId(null);
+            }
           }
         } else if (mode === "pan" && !moved) {
           setExpandedCardId(null);
           setPropEditId(null);
-          setPropTip(null);
+          // Keep pinned tip for讲解; only hover tip clears on blank click
+          setPropTip((t) => (t?.pinned ? t : null));
         }
 
         dragRef.current.mode = "none";
@@ -1392,7 +1440,14 @@ export function TopologyCanvas() {
         setDropForbidden(false);
         setDragCursor(null);
       }}
-      onContextMenu={(e) => e.preventDefault()}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        // Right-click releases a pinned property tip
+        if (propTipRef.current?.pinned) {
+          setPropTip(null);
+          return;
+        }
+      }}
       onDoubleClick={(e) => {
         if (locked) return;
         const world = toWorld(e.clientX, e.clientY);
@@ -1783,6 +1838,10 @@ export function TopologyCanvas() {
           value={propTip.value}
           x={propTip.x}
           y={propTip.y}
+          pinned={propTip.pinned}
+          hostW={hostSize.w}
+          hostH={hostSize.h}
+          onUnpin={() => setPropTip(null)}
         />
       ) : null}
 
