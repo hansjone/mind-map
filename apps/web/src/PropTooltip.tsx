@@ -56,6 +56,10 @@ export function PropTooltip({
       onPointerDown={(e) => {
         if (pinned) e.stopPropagation();
       }}
+      onWheel={(e) => {
+        // Keep scroll inside tip; do not zoom/pan the canvas behind.
+        e.stopPropagation();
+      }}
     >
       <div className="prop-tooltip__label">
         {label}

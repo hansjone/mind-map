@@ -173,7 +173,11 @@ export function NodePropEditor({
         if (variant === "overlay") e.stopPropagation();
       }}
       onWheel={(e) => {
-        if (variant === "overlay") e.stopPropagation();
+        if (variant === "overlay") {
+          e.stopPropagation();
+          // Allow native scroll inside the editor; do not zoom canvas.
+          return;
+        }
       }}
     >
       <div

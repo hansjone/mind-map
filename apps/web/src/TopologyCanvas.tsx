@@ -1151,6 +1151,14 @@ export function TopologyCanvas() {
       ref={hostRef}
       style={{ cursor }}
       onWheel={(e) => {
+        const t = e.target as HTMLElement | null;
+        if (
+          t?.closest?.(
+            ".prop-tooltip, .ns-overlay, .ns-editor, .canvas-toolbar, .canvas-controls, .canvas-minimap",
+          )
+        ) {
+          return;
+        }
         e.preventDefault();
         const factor = e.deltaY > 0 ? 0.9 : 1.1;
         setViewport((v) => ({
@@ -1162,7 +1170,7 @@ export function TopologyCanvas() {
         const t = e.target as HTMLElement | null;
         if (
           t?.closest?.(
-            ".canvas-toolbar, .canvas-controls, .canvas-minimap, .edit-overlay, .node-handles, .hover-card, .inspector",
+            ".canvas-toolbar, .canvas-controls, .canvas-minimap, .edit-overlay, .node-handles, .hover-card, .inspector, .prop-tooltip, .ns-overlay, .ns-editor",
           )
         ) {
           return;
