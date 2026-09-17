@@ -509,9 +509,10 @@ input {
 .prop-tooltip {
   position: absolute;
   z-index: 8;
-  max-width: min(360px, calc(100% - 20px));
-  min-width: 140px;
-  padding: 10px 12px;
+  max-width: min(520px, calc(100% - 24px));
+  min-width: 200px;
+  width: max-content;
+  padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.14));
   background: color-mix(
@@ -528,9 +529,16 @@ input {
     "Noto Sans SC", system-ui, sans-serif;
 }
 
+.prop-tooltip--long {
+  max-width: min(640px, calc(100% - 32px));
+  min-width: min(360px, calc(100% - 32px));
+}
+
 .prop-tooltip--pinned {
   pointer-events: auto;
   z-index: 12;
+  max-width: min(680px, calc(100% - 32px));
+  min-width: min(320px, calc(100% - 32px));
   border-color: color-mix(
     in srgb,
     var(--dsw-alias-brand-primary, #5e6ad2) 55%,
@@ -542,12 +550,16 @@ input {
     0 16px 44px rgba(0, 0, 0, 0.52);
 }
 
+.prop-tooltip--pinned.prop-tooltip--long {
+  max-width: min(720px, calc(100% - 40px));
+}
+
 .prop-tooltip__label {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--dsw-alias-label-secondary, #a5adb8);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -564,14 +576,18 @@ input {
 }
 
 .prop-tooltip__value {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
-  line-height: 1.45;
+  line-height: 1.55;
   color: var(--dsw-alias-label-primary, #f4f5f7);
   white-space: pre-wrap;
   word-break: break-word;
-  max-height: min(40vh, 280px);
+  max-height: min(52vh, 420px);
   overflow: auto;
+}
+
+.prop-tooltip--long .prop-tooltip__value {
+  max-height: min(60vh, 520px);
 }
 
 .edit-overlay {

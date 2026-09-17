@@ -41,10 +41,19 @@ export function PropTooltip({
     });
   }, [x, y, label, value, hostW, hostH, pinned]);
 
+  const longText = value.trim().length >= 72 || value.includes("\n");
+  const className = [
+    "prop-tooltip",
+    pinned ? "prop-tooltip--pinned" : "",
+    longText ? "prop-tooltip--long" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <div
       ref={ref}
-      className={`prop-tooltip${pinned ? " prop-tooltip--pinned" : ""}`}
+      className={className}
       style={{ left: pos.x, top: pos.y }}
       role="tooltip"
       onContextMenu={(e) => {
