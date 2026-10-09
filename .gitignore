@@ -4,6 +4,7 @@ data
 uploads
 *.sqlite
 *.sqlite-*
+*.tsbuildinfo
 .DS_Store
 *.log
 .env
