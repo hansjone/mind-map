@@ -1,6 +1,6 @@
 {
   "name": "dsh-mind-map",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AI 双向无限画布：DSH 右侧思维导图 Tab；对话用 DSH。",
   "type": "module",
   "main": "lib/index.js",
@@ -28,7 +28,7 @@
       "platform": "web",
       "immediately": true,
       "inject": [
-        "@deepseek-ai/dsh-client-ui-settings-plugins",
+        "@deepseek-ai/dsh-client-ui-slots",
         "@deepseek-ai/dsh-client-locale"
       ]
     }

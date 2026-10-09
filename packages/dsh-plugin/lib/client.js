@@ -16,7 +16,8 @@ window.__ModuleLoader__.load({
     const { useEffect, useId, useState } = React
 
     const name = 'dsh-mind-map'
-    const inject = ['slots', 'locale', 'settingsScope']
+    // Desktop 0.2 removed settingsScope (configForms). Do not hard-inject it.
+    const inject = ['slots', 'locale']
     const NS = 'dsh-mind-map'
     const API = '/dsh-mind-map'
     const LOCALE_NS = 'settings.dshMindMap'
@@ -1250,26 +1251,81 @@ window.__ModuleLoader__.load({
         }
       }, 'dsh-mind-map: ui-open poll')
 
-      const scope = ctx.settingsScope.bind({ namespace: NS })
-      const form = createForm(scope)
-      ctx.slots.inject('settings.plugin.item', () =>
-        ctx.slots.register(
-          {
-            name: 'settings.plugin.item',
-            key: NS,
-            locale: LOCALE_NS,
-            inject: () => ({
-              hooks: { card: form.store },
-              edit: (field, value) => form.edit(field, value),
-              save: () => {
-                form.save()
+      const mountSettingsCard = (scope) => {
+        if (!scope || typeof scope.getSnapshot !== 'function') return
+        const form = createForm(scope)
+        try {
+          ctx.slots.inject('settings.plugin.item', () =>
+            ctx.slots.register(
+              {
+                name: 'settings.plugin.item',
+                key: NS,
+                locale: LOCALE_NS,
+                inject: () => ({
+                  hooks: { card: form.store },
+                  edit: (field, value) => form.edit(field, value),
+                  save: () => {
+                    form.save()
+                  },
+                  discard: () => form.discard(),
+                }),
               },
-              discard: () => form.discard(),
-            }),
-          },
-          SettingsCard,
-        ),
-      )
+              SettingsCard,
+            ),
+          )
+        } catch (err) {
+          ctx.logger?.warn?.('dsh-mind-map: settings.plugin.item unavailable: %s', err)
+        }
+      }
+
+      let mounted = false
+      const tryMount = (scope, source) => {
+        if (mounted || !scope) return
+        mounted = true
+        ctx.logger?.info?.('dsh-mind-map: settings card via %s', source)
+        mountSettingsCard(scope)
+      }
+
+      // DSH ≥0.1.7 / 0.2.0 — configForms
+      ctx.inject(['configForms'], (formsCtx) => {
+        const forms = formsCtx.configForms || formsCtx.get?.('configForms')
+        if (!forms || typeof forms.get !== 'function') return
+        const candidates = [NS, 'dsh-mind-map']
+        const hit = candidates
+          .map((id) => {
+            try {
+              return { id, scope: forms.get(id) }
+            } catch {
+              return null
+            }
+          })
+          .find((row) => row?.scope && typeof row.scope.getSnapshot === 'function')
+        if (hit) tryMount(hit.scope, `configForms:${hit.id}`)
+        if (typeof forms.whileServed === 'function') {
+          formsCtx.effect(
+            () =>
+              forms.whileServed(candidates, (served) => {
+                const id = candidates.find((c) => served.has(c))
+                if (!id) return () => {}
+                try {
+                  tryMount(forms.get(id), `whileServed:${id}`)
+                } catch {
+                  /* ignore */
+                }
+                return () => {}
+              }),
+            'dsh-mind-map: configForms whileServed',
+          )
+        }
+      })
+
+      // DSH ≤0.1.5 — settingsScope
+      ctx.inject(['settingsScope'], (scopeCtx) => {
+        if (mounted) return
+        const binder = scopeCtx.settingsScope || scopeCtx.get?.('settingsScope')
+        if (!binder || typeof binder.bind !== 'function') return
+        tryMount(binder.bind({ namespace: NS }), 'settingsScope')
+      })
     }
 
     exports.name = name

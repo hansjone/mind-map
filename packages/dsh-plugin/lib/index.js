@@ -33,6 +33,10 @@ async function importHostPkg(id) {
   const scoped = id.startsWith('@')
   const parts = scoped ? id.split('/') : [id]
   const candidates = [
+    join(dshHome, 'profiles', 'node_modules', ...parts, 'lib', 'index.mjs'),
+    join(dshHome, 'profiles', 'node_modules', ...parts, 'lib', 'index.js'),
+    join(dshHome, 'profiles', 'desktop', 'node_modules', ...parts, 'lib', 'index.mjs'),
+    join(dshHome, 'profiles', 'desktop', 'node_modules', ...parts, 'lib', 'index.js'),
     join(dshHome, 'profiles', 'web', 'node_modules', ...parts, 'lib', 'index.mjs'),
     join(dshHome, 'profiles', 'web', 'node_modules', ...parts, 'lib', 'index.js'),
   ]
